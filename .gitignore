@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv*/
+.env
+.env.*
+
+# Local editor/system files
+.vscode/
+.idea/
+.DS_Store
+
+# Codex/session mounts
+.agents/
+.codex/
+.git.empty-placeholder/
+
+# Isaac Sim / Omniverse / runtime logs
+logs/
+*/logs/
+*.kit.log
+kit_*.log
+ov/
+.cache/
+
+# Generated data and model artifacts
+datasets/
+checkpoints/
+runs/
+*.hdf5
+*.h5
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.rrd
+*.mp4
+*.avi
+*.mov
+
+# Large or local generated assets
+rov_lab/assets/**
+!rov_lab/assets/
+!rov_lab/assets/README.md
+outputs/
+wandb/
+tensorboard/

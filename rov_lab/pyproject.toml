@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rov-lab"
+version = "0.1.0"
+description = "Isaac Lab-based underwater demonstration generation for ROV imitation learning"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "source"}
+packages = {find = {where = ["source"]}}
+include-package-data = true
+zip-safe = false

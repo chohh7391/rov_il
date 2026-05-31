@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rov-il"
+version = "0.1.0"
+description = "Underwater ROV imitation learning project"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = []
+
+[tool.setuptools]
+packages = []
+
+[tool.uv.workspace]
+members = [
+    "rov_lab",
+]
+
+[tool.uv.sources]
+rov-lab = { workspace = true }
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+leisaac = { path = "external_dependencies/leisaac/source/leisaac", editable = true }
+isaaclab = { path = "external_dependencies/IsaacLab/source/isaaclab", editable = true }
+isaaclab_tasks = { path = "external_dependencies/IsaacLab/source/isaaclab_tasks", editable = true }
+isaaclab_mimic = { path = "external_dependencies/IsaacLab/source/isaaclab_mimic", editable = true }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "nvidia"
+url = "https://pypi.nvidia.com"
+
+[tool.uv]
+override-dependencies = [
+    "starlette==0.45.3",
+]
+conflicts = [
+    [
+        { extra = "lab" },
+        { extra = "learning" },
+    ],
+]
+
+[project.optional-dependencies]
+lab = [
+    "h5py>=3.10,<4",
+    "isaacsim[all,extscache]==5.1.0",
+    "rerun-sdk>=0.22,<0.23",
+    "torch==2.7.0",
+    "torchvision==0.22.0",
+    "rov-lab",
+    "leisaac",
+    "isaaclab",
+    "isaaclab_tasks",
+    "isaaclab_mimic",
+]
+learning = [
+    "lerobot==0.4.4",
+]

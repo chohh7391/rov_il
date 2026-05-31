@@ -1,0 +1,2 @@
+"""ROV Lab asset configurations."""
+
