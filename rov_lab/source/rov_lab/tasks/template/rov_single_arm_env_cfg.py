@@ -25,11 +25,11 @@ from leisaac.utils.robot_utils import convert_leisaac_action_to_lerobot
 
 from rov_lab.devices.action_process import init_action_cfg, preprocess_device_action
 from . import mdp
-from rov_lab.assets.robots.blue_rov import BLUE_ROV_SINGLE_ARM_CFG
+from rov_lab.assets.robots import BLUE_ROV_SINGLE_ARM_CFG
 from rov_lab.assets.sensors import BarometerCfg, DVLCfg, ImagingSonarSensorCfg, UWCameraCfg
 
 
-WATER_SURFACE = 3.43389 - 2.0  # Arbitary
+WATER_SURFACE = 3.43389  # Arbitary
 
 @configclass
 class ROVSingleArmTaskSceneCfg(InteractiveSceneCfg):

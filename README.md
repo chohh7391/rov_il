@@ -72,6 +72,53 @@ LeRobot == 0.4.4
 
 Currently, `rov_lab` supports keyboard teleoperation only.
 
+## Assets
+
+Large simulation assets are not tracked in Git. They are published separately as a Hugging Face dataset:
+
+```text
+chohh7391/rov_il-rov_lab-assets
+```
+
+From the repository root, download them into the path expected by `rov_lab`:
+
+```bash
+huggingface-cli download chohh7391/rov_il-rov_lab-assets \
+  --repo-type dataset \
+  --local-dir rov_lab/assets
+```
+
+After download, the local layout should be:
+
+```text
+rov_lab/assets/
+  robots/
+    blue_rov_single_arm.usd
+    so101_follower.usd
+  OceanSim_assets/
+    Bluerov/
+    collected_MHL/
+    collected_rock/
+```
+
+The root-level `so101_follower.usd` compatibility link is required because
+`blue_rov_single_arm.usd` composes the arm payload from that relative location.
+The `OceanSim_assets/` directory contains assets saved from the OceanSim source
+under `external_dependencies/OceanSim`; it is distributed through the Hugging
+Face dataset instead of being committed to this repository.
+
+The code resolves this directory by default:
+
+```text
+<repo-root>/rov_lab/assets
+```
+
+You can override the asset root with:
+
+```bash
+export ROV_LAB_ASSETS_ROOT=/path/to/rov_lab/assets
+```
+
 Example:
 
 ```bash

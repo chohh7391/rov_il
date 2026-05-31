@@ -1,11 +1,8 @@
 """Robot asset configurations for ROV Lab."""
 
-from .blue_rov import BLUE_ROV_BI_ARM_ASSET_PATH, BLUE_ROV_DIR, BLUE_ROV_SINGLE_ARM_ASSET_PATH, BLUE_ROV_SINGLE_ARM_CFG
+from .blue_rov import BLUE_ROV_SINGLE_ARM_ASSET_PATH, BLUE_ROV_SINGLE_ARM_CFG
 
 __all__ = [
-    "BLUE_ROV_BI_ARM_ASSET_PATH",
-    "BLUE_ROV_DIR",
     "BLUE_ROV_SINGLE_ARM_ASSET_PATH",
     "BLUE_ROV_SINGLE_ARM_CFG",
 ]
-

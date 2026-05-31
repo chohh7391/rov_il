@@ -11,9 +11,8 @@ from isaaclab.assets.articulation import ArticulationCfg
 from rov_lab.utils.paths import ASSETS_ROOT
 
 
-BLUE_ROV_DIR: Path = ASSETS_ROOT / "robots" / "blue_rov"
-BLUE_ROV_SINGLE_ARM_ASSET_PATH: Path = BLUE_ROV_DIR / "blue_rov_single_arm.usd"
-BLUE_ROV_BI_ARM_ASSET_PATH: Path = BLUE_ROV_DIR / "blue_rov_bi_arm.usd"
+ROBOT_DIR: Path = ASSETS_ROOT / "robots"
+BLUE_ROV_SINGLE_ARM_ASSET_PATH: Path = ROBOT_DIR / "blue_rov_single_arm.usd"
 
 
 BLUE_ROV_SINGLE_ARM_CFG = ArticulationCfg(
