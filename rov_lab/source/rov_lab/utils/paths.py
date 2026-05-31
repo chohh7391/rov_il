@@ -24,4 +24,6 @@ def resolve_assets_root() -> Path:
 
 
 ASSETS_ROOT: Path = resolve_assets_root()
-
+OBJECT_DIR: Path = ASSETS_ROOT / "objects"
+ROBOT_DIR: Path = ASSETS_ROOT / "robots"
+SCENE_DIR: Path = ASSETS_ROOT / "scenes"

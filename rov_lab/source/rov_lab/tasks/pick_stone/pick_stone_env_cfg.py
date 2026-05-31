@@ -6,10 +6,9 @@ from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.utils import configclass
 from isaaclab.sim.spawners.from_files.from_files_cfg import UsdFileCfg
 
-from rov_lab.assets.scenes.under_water import (
-    OCEAN_SIM_ASSETS_PATH,
-    UNDER_WATER_WITH_MHL_CFG,
-)
+from rov_lab.assets.scenes.under_water import UNDER_WATER_WITH_MHL_CFG
+from rov_lab.utils.paths import OBJECT_DIR
+
 
 from ..template import (
     ROVSingleArmObservationsCfg,
@@ -33,7 +32,7 @@ class PickStoneSceneCfg(ROVSingleArmTaskSceneCfg):
             rot=(0.205415, -0.502620, -0.743210, 0.390915)
         ),
         spawn=UsdFileCfg(
-            usd_path=str(OCEAN_SIM_ASSETS_PATH / "collected_rock" / "rock.usd"),
+            usd_path=str(OBJECT_DIR / "collected_rock" / "rock.usd"),
             rigid_props=sim_utils.RigidBodyPropertiesCfg(
                 disable_gravity=True,
                 linear_damping=10.0,

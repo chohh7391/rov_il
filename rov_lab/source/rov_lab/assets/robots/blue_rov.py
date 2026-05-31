@@ -2,22 +2,16 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets.articulation import ArticulationCfg
 
-from rov_lab.utils.paths import ASSETS_ROOT
-
-
-ROBOT_DIR: Path = ASSETS_ROOT / "robots"
-BLUE_ROV_SINGLE_ARM_ASSET_PATH: Path = ROBOT_DIR / "blue_rov_single_arm.usd"
+from rov_lab.utils.paths import ROBOT_DIR
 
 
 BLUE_ROV_SINGLE_ARM_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        usd_path=str(BLUE_ROV_SINGLE_ARM_ASSET_PATH),
+        usd_path=str(ROBOT_DIR / "blue_rov_single_arm.usd"),
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=True,
             linear_damping=10.0,

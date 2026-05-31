@@ -48,6 +48,7 @@ runs/
 rov_lab/assets/**
 !rov_lab/assets/
 !rov_lab/assets/README.md
+rov_lab/assets*.zip
 outputs/
 wandb/
 tensorboard/

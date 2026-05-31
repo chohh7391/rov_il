@@ -26,7 +26,7 @@ Do not initialize submodules recursively by default. `leisaac` contains its own 
 Recommended clone/update flow:
 
 ```bash
-git clone git@github.com:<user>/rov_il.git
+git clone git@github.com:chohh7391/rov_il.git
 cd rov_il
 git submodule update --init external_dependencies/IsaacLab
 git submodule update --init external_dependencies/OceanSim
@@ -92,20 +92,19 @@ After download, the local layout should be:
 
 ```text
 rov_lab/assets/
+  objects/
+    collected_rock/
   robots/
     blue_rov_single_arm.usd
     so101_follower.usd
-  OceanSim_assets/
-    Bluerov/
+  scenes/
     collected_MHL/
-    collected_rock/
 ```
 
-The root-level `so101_follower.usd` compatibility link is required because
-`blue_rov_single_arm.usd` composes the arm payload from that relative location.
-The `OceanSim_assets/` directory contains assets saved from the OceanSim source
-under `external_dependencies/OceanSim`; it is distributed through the Hugging
-Face dataset instead of being committed to this repository.
+Some assets in `objects/`, `robots/`, and `scenes/` were prepared from
+OceanSim assets under `external_dependencies/OceanSim`. The prepared asset
+archive is distributed through the Hugging Face dataset instead of being
+committed to this repository.
 
 The code resolves this directory by default:
 
