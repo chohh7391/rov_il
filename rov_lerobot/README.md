@@ -67,12 +67,14 @@ datasets/hdf5/dataset.hdf5
 Create the local LeRobot Dataset v3:
 
 ```bash
-HDF5_USE_FILE_LOCKING=FALSE uv --project rov_lerobot run rov-pick-stone-to-lerobot \
-  --repo-id rov_il/pick_stone \
-  --output-root datasets/lerobot_v3/pick_stone \
-  --hdf5-files datasets/hdf5/dataset.hdf5 \
-  --camera-keys front wrist sonar \
-  --overwrite
+HDF5_USE_FILE_LOCKING=FALSE PYTHONPATH=. uv --project rov_lerobot run rov-pick-stone-to-lerobot \
+--repo-id rov_il/pick_stone \
+--output-root datasets/lerobot_v3/pick_stone \
+--hdf5-files datasets/hdf5/dataset.hdf5 \
+--camera-keys front wrist sonar \
+--fixed-task-fallback \
+--task "Pick up the target colored cube and lift it off theseabed." \
+--overwrite
 ```
 
 Check that conversion produced LeRobot metadata:
@@ -106,15 +108,24 @@ The converter follows LeRobot Dataset v3 as implemented by `lerobot==0.4.4`.
 After conversion, train an ACT baseline:
 
 ```bash
-uv --project rov_lerobot run lerobot-train \
-  --dataset.repo_id=rov_il/pick_stone \
-  --dataset.root=datasets/lerobot/pick_stone \
-  --policy.type=act \
-  --policy.push_to_hub=false \
-  --output_dir=checkpoints/act_pick_stone \
-  --job_name=act_pick_stone \
-  --policy.device=cuda \
-  --wandb.enable=false
+PYTORCH_ALLOC_CONF=expandable_segments:True uv --project rov_lerobot run lerobot-train \
+--dataset.repo_id=rov_il/pick_stone \
+--dataset.root=datasets/lerobot_v3/pick_stone \
+--policy.type=act \
+--policy.push_to_hub=false \
+--output_dir=checkpoints/act_pick_stone_smoke \
+--job_name=act_pick_stone_smoke \
+--wandb.enable=policy.device=cuda \
+--wandb.enable=false \
+--batch_size=1 \
+--steps=1000 \
+--policy.chunk_size=20 \
+--policy.n_action_steps=20 \
+--policy.dim_model=256 \
+--policy.dim_feedforward=1024 \
+--policy.n_encoder_layers=2 \
+--policy.n_decoder_layers=1 \
+--policy.n_vae_encoder_layers=2
 ```
 
 Use `--policy.push_to_hub=false` for local-only training. If pushing the trained
