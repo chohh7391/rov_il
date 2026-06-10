@@ -283,10 +283,20 @@ class ROVSingleArmTaskEnvCfg(ManagerBasedRLEnvCfg):
             processed_action = convert_leisaac_action_to_lerobot(action.unsqueeze(0)).squeeze(0)
         else:
             processed_action = action.cpu().numpy()
+        task = self.task_description
+        task_instructions = getattr(self, "task_instructions", None)
+        target_color_data = episode_data._data.get("task", {}).get("target_color_id")
+        if task_instructions is not None and target_color_data:
+            target_color_id = int(target_color_data[-1].reshape(-1)[0].item())
+            if not 0 <= target_color_id < len(task_instructions):
+                raise ValueError(
+                    f"target_color_id must be in [0, {len(task_instructions) - 1}], got {target_color_id}"
+                )
+            task = task_instructions[target_color_id]
         frame = {
             "action": processed_action,
             "observation.state": convert_leisaac_action_to_lerobot(obs_data["joint_pos"][-1].unsqueeze(0)).squeeze(0),
-            "task": self.task_description,
+            "task": task,
         }
         for frame_key in dataset_cfg.features.keys():
             if not frame_key.startswith("observation.images"):

@@ -153,6 +153,7 @@ def _add_episode_frames(dataset: object, episode: Hdf5Episode, cfg: PickStoneDat
     actions = _as_float32(episode.read(cfg.action_key))
     states = _as_float32(episode.read(cfg.state_key))
     images = {camera_key: episode.read(f"obs/{camera_key}") for camera_key in cfg.camera_keys}
+    episode_task = _resolve_episode_task(episode, cfg)
 
     episode_len = min([len(actions), len(states), *[len(value) for value in images.values()]])
     start = min(cfg.skip_first_frames, episode_len)
@@ -162,7 +163,7 @@ def _add_episode_frames(dataset: object, episode: Hdf5Episode, cfg: PickStoneDat
         frame: dict[str, object] = {
             "action": actions[frame_idx],
             "observation.state": states[frame_idx],
-            "task": cfg.task,
+            "task": episode_task,
         }
         for camera_key, frames in images.items():
             frame[f"observation.images.{camera_key}"] = normalize_image_channels(frames[frame_idx])
@@ -170,6 +171,26 @@ def _add_episode_frames(dataset: object, episode: Hdf5Episode, cfg: PickStoneDat
         written += 1
 
     return written
+
+
+def _resolve_episode_task(episode: Hdf5Episode, cfg: PickStoneDatasetConfig) -> str:
+    try:
+        target_color_id = episode.read_constant_int(cfg.target_color_key)
+    except KeyError as exc:
+        if cfg.allow_fixed_task_fallback:
+            return cfg.task
+        raise KeyError(
+            f"{episode.file_path}:{episode.name} is missing target color metadata "
+            f"'{cfg.target_color_key}'. Re-record with task metadata or set "
+            "allow_fixed_task_fallback=True to use cfg.task."
+        ) from exc
+
+    if not 0 <= target_color_id < len(cfg.instruction_templates):
+        raise ValueError(
+            f"{episode.file_path}:{episode.name}:{cfg.target_color_key} has invalid target id "
+            f"{target_color_id}; expected 0 <= id < {len(cfg.instruction_templates)}"
+        )
+    return cfg.instruction_templates[target_color_id]
 
 
 def _as_float32(array: np.ndarray) -> np.ndarray:

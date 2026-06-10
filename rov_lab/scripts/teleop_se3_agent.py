@@ -120,6 +120,23 @@ def manual_terminate(env: ManagerBasedRLEnv | DirectRLEnv, success: bool):
         env.cfg.return_success_status = success
 
 
+def print_task_instruction(env: ManagerBasedRLEnv | DirectRLEnv) -> None:
+    """Print env 0's per-episode language instruction after a reset, if the task exposes one.
+
+    Language-conditioned tasks (e.g. pick_stone) sample a per-episode target at reset and store
+    it on the env, with the matching instruction strings on the env cfg. This surfaces that
+    instruction so the human operator knows what to demonstrate. It is a no-op for tasks that do
+    not expose this metadata.
+    """
+    target_ids = getattr(env, "pick_stone_target_color_id", None)
+    instructions = getattr(env.cfg, "task_instructions", None)
+    if target_ids is None or instructions is None:
+        return
+    target_id = int(target_ids[0].item())
+    if 0 <= target_id < len(instructions):
+        print(f"[task] Instruction: {instructions[target_id]}")
+
+
 def main():  # noqa: C901
     """Run ROV Lab teleoperation with an Isaac Lab environment."""
 
@@ -238,6 +255,7 @@ def main():  # noqa: C901
         env.initialize()
     env.reset()
     teleop_interface.reset()
+    print_task_instruction(env)
 
     resume_recorded_demo_count = 0
     if args_cli.record and args_cli.resume:
@@ -277,6 +295,7 @@ def main():  # noqa: C901
                         manual_terminate(env, True)
                 if should_reset_recording_instance:
                     env.reset()
+                    print_task_instruction(env)
                     should_reset_recording_instance = False
                     if start_record_state:
                         if args_cli.record:

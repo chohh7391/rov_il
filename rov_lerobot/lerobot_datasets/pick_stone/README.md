@@ -9,6 +9,21 @@ Default HDF5 mapping:
 - `obs/joint_pos` -> `observation.state`
 - `obs/front` -> `observation.images.front`
 - `obs/wrist` -> `observation.images.wrist`
+- `task/target_color_id` -> per-episode language `task`
+
+For the colored-cube task, every recorded episode must include a constant integer
+target id at `task/target_color_id`:
+
+- `0` -> `pick up the red cube`
+- `1` -> `pick up the green cube`
+- `2` -> `pick up the blue cube`
+
+The converter reads that id once per episode and passes the corresponding natural
+language string as `frame["task"]` for every frame in that episode. LeRobot stores
+the distinct recorded instructions in `meta/tasks.parquet` and writes each frame's
+`task_index` into the data parquet. Omit `--task` for normal color-conditioned
+data. Use `--fixed-task-fallback --task "..."` only for legacy HDF5 files that do
+not contain `task/target_color_id`.
 
 Example:
 

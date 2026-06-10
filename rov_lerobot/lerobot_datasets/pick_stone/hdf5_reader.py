@@ -42,6 +42,16 @@ class Hdf5Episode:
     def has(self, key: str) -> bool:
         return key in self.group and isinstance(self.group[key], h5py.Dataset)
 
+    def read_constant_int(self, key: str) -> int:
+        """Read an episode metadata dataset that must contain one constant integer value."""
+        values = np.ravel(self.read(key))
+        if values.size == 0:
+            raise ValueError(f"{self.file_path}:{self.name}:{key} is empty")
+        first_value = values[0]
+        if not np.all(values == first_value):
+            raise ValueError(f"{self.file_path}:{self.name}:{key} must be constant within an episode")
+        return int(first_value)
+
 
 def iter_episodes(hdf5_files: tuple[Path, ...]) -> Iterator[tuple[h5py.File, Hdf5Episode]]:
     """Yield open HDF5 episode groups in deterministic file/name order.
@@ -68,4 +78,3 @@ def _episode_sort_key(name: str) -> tuple[int, str]:
         if suffix.isdigit():
             return int(suffix), name
     return 1_000_000_000, name
-

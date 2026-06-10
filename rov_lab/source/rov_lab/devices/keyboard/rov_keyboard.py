@@ -39,6 +39,10 @@ class ROVKeyboard(Device):
         self._display_controls_table.add_row(["DOWN", "rov_backward"])
         self._display_controls_table.add_row(["LEFT", "rov_left"])
         self._display_controls_table.add_row(["RIGHT", "rov_right"])
+        self._display_controls_table.add_row(["HOME", "rov_up"])
+        self._display_controls_table.add_row(["END", "rov_down"])
+        self._display_controls_table.add_row(["DEL", "rov_yaw_left"])
+        self._display_controls_table.add_row(["PAGE_DOWN", "rov_yaw_right"])
         self._display_controls_table.add_row(["W", "forward"])
         self._display_controls_table.add_row(["S", "backward"])
         self._display_controls_table.add_row(["A", "left"])
@@ -130,6 +134,20 @@ class ROVKeyboard(Device):
                 [0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             )
             * self.rov_sensitivity,
+            "rov_up": np.asarray([0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+            * self.rov_sensitivity,
+            "rov_down": np.asarray(
+                [0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            )
+            * self.rov_sensitivity,
+            "rov_yaw_left": np.asarray(
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            )
+            * self.rov_sensitivity,
+            "rov_yaw_right": np.asarray(
+                [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            )
+            * self.rov_sensitivity,
             "forward": np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
             * self.pos_sensitivity,
             "backward": np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
@@ -172,6 +190,10 @@ class ROVKeyboard(Device):
             "DOWN": "rov_backward",
             "LEFT": "rov_left",
             "RIGHT": "rov_right",
+            "HOME": "rov_up",
+            "END": "rov_down",
+            "DEL": "rov_yaw_left",
+            "PAGE_DOWN": "rov_yaw_right",
             "W": "forward",
             "S": "backward",
             "A": "left",

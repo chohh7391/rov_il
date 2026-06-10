@@ -6,7 +6,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
-DEFAULT_TASK_DESCRIPTION = "Pick three stones and put them into the plate, then reset the arm to rest state."
+DEFAULT_TASK_DESCRIPTION = "Pick up the target colored cube and lift it off the seabed."
+DEFAULT_TARGET_COLOR_KEY = "task/target_color_id"
+# Keep in sync with rov_lab/source/rov_lab/tasks/pick_stone/mdp/task_metadata.py::TARGET_INSTRUCTIONS.
+DEFAULT_INSTRUCTION_TEMPLATES: tuple[str, ...] = (
+    "pick up the red cube",
+    "pick up the green cube",
+    "pick up the blue cube",
+)
 
 DEFAULT_ACTION_NAMES = [
     "rov.vx",
@@ -55,6 +62,9 @@ class PickStoneDatasetConfig:
     use_videos: bool = True
     vcodec: str = "auto"
     streaming_encoding: bool = False
+    target_color_key: str = DEFAULT_TARGET_COLOR_KEY
+    instruction_templates: tuple[str, ...] = DEFAULT_INSTRUCTION_TEMPLATES
+    allow_fixed_task_fallback: bool = False
     action_names: tuple[str, ...] = field(default_factory=lambda: tuple(DEFAULT_ACTION_NAMES))
     state_names: tuple[str, ...] = field(default_factory=lambda: tuple(DEFAULT_STATE_NAMES))
 
@@ -67,4 +77,7 @@ class PickStoneDatasetConfig:
             raise ValueError(f"min_episode_frames must be positive, got {self.min_episode_frames}")
         if not self.hdf5_files:
             raise ValueError("At least one HDF5 file is required.")
-
+        if not self.target_color_key:
+            raise ValueError("target_color_key must be non-empty")
+        if not self.instruction_templates:
+            raise ValueError("instruction_templates must contain at least one instruction")

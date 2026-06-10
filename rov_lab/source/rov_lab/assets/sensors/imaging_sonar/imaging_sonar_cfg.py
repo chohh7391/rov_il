@@ -70,9 +70,10 @@ class ImagingSonarSensorCfg(CameraCfg):
     hori_res: int = 3000
     """Horizontal raytrace resolution (pixels).
 
-    Vertical resolution is automatically derived as ``int(hori_res / (hori_fov / vert_fov))``
-    so that the pinhole render matches the sonar's FOV aspect ratio under Isaac Sim's
-    square-pixel constraint.
+    Vertical resolution is automatically derived as
+    ``int(hori_res / (tan(hori_fov/2) / tan(vert_fov/2)))`` so that the pinhole render matches
+    the sonar's vertical FOV under Isaac Sim's square-pixel constraint (the aspect ratio is the
+    ratio of FOV tangents, not of the raw angles).
     """
 
     include_unlabelled: bool = False

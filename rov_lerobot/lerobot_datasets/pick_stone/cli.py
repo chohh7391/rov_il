@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .config import DEFAULT_TASK_DESCRIPTION, PickStoneDatasetConfig
+from .config import DEFAULT_TARGET_COLOR_KEY, DEFAULT_TASK_DESCRIPTION, PickStoneDatasetConfig
 from .converter import convert_pick_stone_hdf5
 
 
@@ -16,7 +16,21 @@ def main() -> None:
     parser.add_argument("--hdf5-files", required=True, nargs="+", type=Path, help="Input Isaac Lab HDF5 files.")
     parser.add_argument("--fps", type=int, default=30)
     parser.add_argument("--robot-type", default="fixed_rov_single_arm")
-    parser.add_argument("--task", default=None, help="Task string stored in meta/tasks.")
+    parser.add_argument(
+        "--task",
+        default=None,
+        help="Fallback task string used only with --fixed-task-fallback.",
+    )
+    parser.add_argument(
+        "--target-color-key",
+        default=DEFAULT_TARGET_COLOR_KEY,
+        help="HDF5 key containing the per-episode target color id.",
+    )
+    parser.add_argument(
+        "--fixed-task-fallback",
+        action="store_true",
+        help="Use --task when target-color metadata is missing.",
+    )
     parser.add_argument("--action-key", default="actions")
     parser.add_argument("--state-key", default="obs/joint_pos")
     parser.add_argument("--camera-keys", nargs="+", default=["front", "wrist", "sonar"])
@@ -46,6 +60,8 @@ def main() -> None:
         use_videos=not args.no_videos,
         vcodec=args.vcodec,
         streaming_encoding=args.streaming_encoding,
+        target_color_key=args.target_color_key,
+        allow_fixed_task_fallback=args.fixed_task_fallback,
     )
     summary = convert_pick_stone_hdf5(cfg)
     print(

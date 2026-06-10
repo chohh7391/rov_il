@@ -6,6 +6,7 @@ from .rov_single_arm_env_cfg import (
     ROVSingleArmTaskSceneCfg,
     ROVSingleArmTerminationsCfg,
     SingleArmActionsCfg,
+    SingleArmEventCfg,
 )
 
 __all__ = [
@@ -14,5 +15,5 @@ __all__ = [
     "ROVSingleArmTaskSceneCfg",
     "ROVSingleArmTerminationsCfg",
     "SingleArmActionsCfg",
+    "SingleArmEventCfg",
 ]
-

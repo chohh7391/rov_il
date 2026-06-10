@@ -60,7 +60,7 @@ That is expected. `uv --project rov_lerobot` uses `rov_lerobot/.venv`.
 
 Input HDF5 demos are expected under `datasets/hdf5/`, for example:
 
-```text
+```textㅇ
 datasets/hdf5/dataset.hdf5
 ```
 

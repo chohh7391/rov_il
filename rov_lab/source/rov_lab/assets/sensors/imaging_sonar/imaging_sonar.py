@@ -71,7 +71,14 @@ class ImagingSonarSensor(Camera):
         #    Isaac Sim only supports square pixels, so we fix horizontal resolution and
         #    scale vertical resolution by the FOV aspect ratio. The horizontal aperture is
         #    re-set after init() to actually match hori_fov (see end of __init__).
-        self._aspect_ratio = cfg.hori_fov / cfg.vert_fov
+        #    The aspect ratio must be the ratio of FOV *tangents*, not of the raw angles: with
+        #    square pixels and the horizontal aperture matched to hori_fov, the vertical FOV is
+        #    determined by height/width = tan(vert_fov/2)/tan(hori_fov/2). Using the angle ratio
+        #    only approximates this for small angles and, at hori_fov=130 deg, renders a far too
+        #    tall vertical FOV (e.g. ~36 deg instead of 20 deg).
+        self._aspect_ratio = float(
+            np.tan(np.deg2rad(cfg.hori_fov) / 2.0) / np.tan(np.deg2rad(cfg.vert_fov) / 2.0)
+        )
         cfg.width = int(cfg.hori_res)
         cfg.height = int(cfg.hori_res / self._aspect_ratio)
 

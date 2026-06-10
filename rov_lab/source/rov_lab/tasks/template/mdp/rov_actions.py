@@ -210,9 +210,20 @@ class ROVVelocityAction(ActionTerm):
         # of being left as a steady-state offset by a proportional-only servo.
         self._lin_vel_integral += lin_vel_error * self._dt
         self._lin_vel_integral.clamp_(-self._lin_integral_limit, self._lin_integral_limit)
+        # Hold the integral at zero whenever NO linear axis is commanded so the vehicle brakes to
+        # a clean stop. Otherwise the integral wound up during the last cruise persists after the
+        # command is released and shows up as a slow forward creep. While any linear axis is
+        # commanded the integral keeps rejecting steady disturbances on the (possibly uncommanded)
+        # other axes, e.g. the cruise sink.
+        lin_cmd_active = (self._raw_actions[:, 0:3].abs() > self._action_deadband).any(dim=1, keepdim=True)
+        self._lin_vel_integral.mul_(lin_cmd_active.to(self._lin_vel_integral.dtype))
         force_b = self._kp_linear * lin_vel_error + self._ki_linear * self._lin_vel_integral
 
         # Angular velocity servo (yaw rate + rotation damping).
+        # TODO(teleop): yaw commands make the ROV tremble/oscillate. Likely the angular P-gain
+        # (kp_angular) and/or the roll/pitch attitude-hold PI fighting the commanded rotation.
+        # Revisit angular gains / decouple attitude-hold during yaw. Deferred; tracked separately
+        # from this integral-drift fix.
         torque_b = self._kp_angular * ang_vel_error
 
         # Clamp in body frame so the actuator limits stay aligned with the ROV axes.
