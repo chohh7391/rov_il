@@ -54,3 +54,12 @@ class UWCameraCfg(CameraCfg):
     The blue channel is typically the largest, reflecting how blue-shifted scattered
     light dominates in water.
     """
+
+    debug_print: bool = True
+    """Whether to print UW camera buffer diagnostics while updating the sensor."""
+
+    debug_print_first_n_frames: int = 5
+    """Number of initial sensor frames to print for every environment."""
+
+    debug_print_interval: int = 30
+    """Print diagnostics every N sensor frames after the initial debug frames."""

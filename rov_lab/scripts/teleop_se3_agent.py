@@ -46,13 +46,6 @@ parser.add_argument("--lerobot_dataset_repo_id", type=str, default=None, help="L
 parser.add_argument("--lerobot_dataset_fps", type=int, default=30, help="Lerobot Dataset frames per second.")
 
 parser.add_argument("--visualize", action="store_true", help="whether to enable visualization")
-parser.add_argument("--print", action="store_true", help="whether to print ROV sensor data summaries.")
-parser.add_argument(
-    "--print_sensor_every",
-    type=int,
-    default=30,
-    help="Print ROV sensor summaries every N stepped frames when --print is enabled.",
-)
 
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
@@ -78,9 +71,6 @@ from leisaac.utils.env_utils import dynamic_reset_gripper_effort_limit_sim
 from rov_lab.assets.sensors.utils.rerun_visualizer import (
     init_rerun,
     log_rov_sensors,
-    print_arm_frame_summary,
-    print_robot_dynamics_summary,
-    print_rov_sensor_summary,
 )
 import rov_lab.tasks  # noqa: F401
 
@@ -247,8 +237,6 @@ def main():  # noqa: C901
     if hasattr(env, "initialize"):
         env.initialize()
     env.reset()
-    if args_cli.print:
-        print_robot_dynamics_summary(env)
     teleop_interface.reset()
 
     resume_recorded_demo_count = 0
@@ -324,13 +312,6 @@ def main():  # noqa: C901
                             print("Start Recording!!!")
                         start_record_state = True
                     env.step(actions)
-                    if (
-                        args_cli.print
-                        and args_cli.print_sensor_every > 0
-                        and step_count % args_cli.print_sensor_every == 0
-                    ):
-                        print_rov_sensor_summary(env, step=step_count)
-                        print_arm_frame_summary(env, step=step_count)
                     if args_cli.visualize:
                         log_rov_sensors(env, step=step_count)
                     step_count += 1

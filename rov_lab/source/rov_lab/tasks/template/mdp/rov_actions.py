@@ -93,6 +93,39 @@ class ROVVelocityAction(ActionTerm):
         self._action_deadband = float(cfg.action_deadband)
         self._dt = float(env.step_dt)
 
+        # Arm-aware center-of-mass compensation.
+        # The velocity servo only drives the ``rov_base`` body, but the arm shifts the
+        # combined (base + arm) center of mass away from where the thrust is applied.
+        # A pure horizontal thrust then has a moment arm about the combined COM, which
+        # pitches the whole vehicle during acceleration. We cache the per-body masses
+        # so we can recompute the combined COM each step (the arm configuration, and
+        # therefore the COM, changes over time).
+        self._com_compensation = bool(cfg.com_compensation)
+        body_masses = self._asset.data.default_mass.to(self.device)  # (num_envs, num_bodies)
+        self._body_masses = body_masses.unsqueeze(-1)  # (num_envs, num_bodies, 1)
+        self._total_mass = body_masses.sum(dim=1, keepdim=True).clamp_min(1.0e-9)  # (num_envs, 1)
+
+        # Integral action on the linear velocity servo. A pure proportional servo leaves a
+        # steady-state velocity error against any persistent disturbance (e.g. the arm's
+        # hydrodynamic/coupling load), which shows up as a slow continuous sink while
+        # cruising. The integral term drives that error to zero.
+        self._ki_linear = torch.tensor(cfg.ki_linear, device=self.device, dtype=torch.float32)
+        self._lin_integral_limit = torch.tensor(cfg.lin_integral_limit, device=self.device, dtype=torch.float32)
+        self._lin_vel_integral = torch.zeros(self.num_envs, 3, device=self.device)
+
+        # Roll/pitch attitude hold. The teleoperation command never asks the ROV base to
+        # roll or pitch, so the desired attitude is "level". The angular-velocity servo only
+        # damps rotation; under a constant disturbance torque it settles at a non-zero rate
+        # and the vehicle keeps tipping. A PI leveling term about the gravity axis actively
+        # returns roll/pitch to zero without affecting yaw.
+        self._attitude_hold = bool(cfg.attitude_hold)
+        self._kp_attitude = float(cfg.kp_attitude)
+        self._ki_attitude = float(cfg.ki_attitude)
+        self._att_integral_limit = float(cfg.att_integral_limit)
+        self._att_integral = torch.zeros(self.num_envs, 3, device=self.device)
+        self._world_up = torch.tensor([0.0, 0.0, 1.0], device=self.device).repeat(self.num_envs, 1)
+        self._body_up_axis = torch.tensor([0.0, 0.0, 1.0], device=self.device).repeat(self.num_envs, 1)
+
     """
     Properties.
     """
@@ -172,7 +205,14 @@ class ROVVelocityAction(ActionTerm):
         lin_vel_error = self._target_lin_vel_b - curr_lin_vel_b
         ang_vel_error = self._target_ang_vel_b - curr_ang_vel_b
 
-        force_b = self._kp_linear * lin_vel_error
+        # Linear PI servo. The integral state is updated with anti-windup clamping so a
+        # persistent velocity error (e.g. the slow cruise sink) is integrated out instead
+        # of being left as a steady-state offset by a proportional-only servo.
+        self._lin_vel_integral += lin_vel_error * self._dt
+        self._lin_vel_integral.clamp_(-self._lin_integral_limit, self._lin_integral_limit)
+        force_b = self._kp_linear * lin_vel_error + self._ki_linear * self._lin_vel_integral
+
+        # Angular velocity servo (yaw rate + rotation damping).
         torque_b = self._kp_angular * ang_vel_error
 
         # Clamp in body frame so the actuator limits stay aligned with the ROV axes.
@@ -182,6 +222,31 @@ class ROVVelocityAction(ActionTerm):
         # 4. 계산된 바디 프레임 힘/토크를 월드 프레임으로 변환하여 PhysX에 적용
         forces_w = math_utils.quat_apply(control_quat_w, force_b)
         torques_w = math_utils.quat_apply(control_quat_w, torque_b)
+
+        # 5. Arm-aware COM compensation (feed-forward).
+        # PhysX applies the external force at the rov_base center of mass ``P``. The
+        # combined (base + arm) center of mass ``C`` is offset by the arm, so the thrust
+        # produces a parasitic torque ``(P - C) x F`` about ``C`` that pitches the vehicle.
+        # Add a compensating couple ``(C - P) x F`` so the net wrench is equivalent to the
+        # thrust acting through the true combined COM. This is applied after the servo clamp
+        # so the full physical correction is always delivered regardless of actuator limits.
+        if self._com_compensation:
+            com_w = self._asset.data.body_com_pos_w  # (num_envs, num_bodies, 3)
+            combined_com_w = (self._body_masses * com_w).sum(dim=1) / self._total_mass  # (num_envs, 3)
+            force_point_w = com_w[:, self._rov_body_idx]  # application point P
+            torques_w = torques_w + torch.cross(combined_com_w - force_point_w, forces_w, dim=-1)
+
+        # 6. Roll/pitch attitude leveling (world frame, PI).
+        # ``cross(body_up, world_up)`` yields a world-frame axis whose magnitude is sin(tilt)
+        # and whose direction is the torque that rotates the vehicle back toward level. It has
+        # no component about the gravity (yaw) axis, so commanded heading is untouched. The
+        # integral term removes any residual standing tilt from a constant disturbance torque.
+        if self._attitude_hold:
+            body_up_w = math_utils.quat_apply(control_quat_w, self._body_up_axis)
+            tilt_axis_w = torch.cross(body_up_w, self._world_up, dim=-1)  # ~ sin(tilt) about correcting axis
+            self._att_integral += tilt_axis_w * self._dt
+            self._att_integral.clamp_(-self._att_integral_limit, self._att_integral_limit)
+            torques_w = torques_w + self._kp_attitude * tilt_axis_w + self._ki_attitude * self._att_integral
 
         self._asset.permanent_wrench_composer.set_forces_and_torques(
             forces=forces_w.unsqueeze(1),
@@ -198,6 +263,8 @@ class ROVVelocityAction(ActionTerm):
             self._target_ang_vel_b[:] = 0.0
             self._forces[:] = 0.0
             self._torques[:] = 0.0
+            self._lin_vel_integral[:] = 0.0
+            self._att_integral[:] = 0.0
         else:
             self._raw_actions[env_ids] = 0.0
             self._processed_actions[env_ids] = 0.0
@@ -205,6 +272,8 @@ class ROVVelocityAction(ActionTerm):
             self._target_ang_vel_b[env_ids] = 0.0
             self._forces[env_ids] = 0.0
             self._torques[env_ids] = 0.0
+            self._lin_vel_integral[env_ids] = 0.0
+            self._att_integral[env_ids] = 0.0
 
 
 @configclass
@@ -248,6 +317,43 @@ class ROVVelocityActionCfg(ActionTermCfg):
 
     action_deadband: float = 1.0e-4
     """Raw action magnitude below which the axis is considered released."""
+
+    com_compensation: bool = True
+    """Whether to add an arm-aware center-of-mass compensation couple.
+
+    When enabled, the applied thrust is made equivalent to a force acting through the
+    combined (base + arm) center of mass, cancelling the parasitic pitch torque that the
+    off-COM arm load would otherwise induce during acceleration. Set to ``False`` to
+    recover the legacy behaviour (force applied at the ``rov_base`` body only).
+    """
+
+    ki_linear: tuple[float, float, float] = (3.0, 3.0, 5.0)
+    """Per-axis integral gain for linear velocity control.
+
+    Removes the steady-state velocity error a proportional-only servo leaves against a
+    persistent disturbance (notably the slow downward drift while cruising forward).
+    """
+
+    lin_integral_limit: tuple[float, float, float] = (2.0, 2.0, 2.0)
+    """Symmetric anti-windup clamp on the linear velocity integral state (m, per axis)."""
+
+    attitude_hold: bool = True
+    """Whether to actively hold the ROV base level in roll and pitch.
+
+    The teleoperation command never rolls or pitches the base, so the target attitude is
+    level. This PI leveling term returns roll/pitch to zero (yaw is left to the angular
+    servo), eliminating the continuous nose-down tipping a damping-only angular servo
+    allows under a constant disturbance torque.
+    """
+
+    kp_attitude: float = 80.0
+    """Proportional gain for roll/pitch leveling (N·m per unit sin(tilt))."""
+
+    ki_attitude: float = 20.0
+    """Integral gain for roll/pitch leveling, removing any residual standing tilt."""
+
+    att_integral_limit: float = 0.5
+    """Symmetric anti-windup clamp on the attitude leveling integral state."""
 
 
 class ROVRelativeIKAction(DifferentialInverseKinematicsAction):

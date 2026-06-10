@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rov-lerobot"
+version = "0.1.0"
+description = "LeRobot dataset conversion and training utilities for ROV imitation learning"
+readme = "lerobot_datasets/pick_stone/README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "h5py>=3.10,<4",
+    "lerobot==0.4.4",
+    "numpy>=1.26,<3",
+]
+
+[project.scripts]
+rov-pick-stone-to-lerobot = "rov_lerobot.lerobot_datasets.pick_stone.cli:main"
+
+[tool.setuptools]
+packages = [
+    "rov_lerobot",
+    "rov_lerobot.lerobot_datasets",
+    "rov_lerobot.lerobot_datasets.pick_stone",
+]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.package-dir]
+rov_lerobot = "."
+

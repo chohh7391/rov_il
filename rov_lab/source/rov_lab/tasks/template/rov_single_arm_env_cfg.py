@@ -14,7 +14,7 @@ from isaaclab.managers import ObservationTermCfg as ObsTerm
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.scene import InteractiveSceneCfg
-from isaaclab.sensors import FrameTransformerCfg, OffsetCfg, TiledCameraCfg
+from isaaclab.sensors import FrameTransformerCfg, OffsetCfg
 from isaaclab.utils import configclass
 from isaaclab.utils.datasets.episode_data import EpisodeData
 from isaaclab.sim.spawners.from_files.from_files_cfg import GroundPlaneCfg
@@ -53,12 +53,11 @@ class ROVSingleArmTaskSceneCfg(InteractiveSceneCfg):
         ],
     )
 
-    wrist: TiledCameraCfg = TiledCameraCfg(
+    wrist: UWCameraCfg = UWCameraCfg(
         prim_path="{ENV_REGEX_NS}/Robot/Arm/gripper/wrist_camera",
-        offset=TiledCameraCfg.OffsetCfg(
+        offset=UWCameraCfg.OffsetCfg(
             pos=(-0.001, 0.1, -0.04), rot=(-0.404379, -0.912179, -0.0451242, 0.0486914), convention="ros"
         ),  # wxyz
-        data_types=["rgb"],
         spawn=sim_utils.PinholeCameraCfg(
             focal_length=36.5,
             focus_distance=400.0,
@@ -69,29 +68,32 @@ class ROVSingleArmTaskSceneCfg(InteractiveSceneCfg):
         width=640,
         height=480,
         update_period=1 / 30.0,  # 30FPS
+        update_latest_camera_pose=True,
+        # OceanSim default underwater camera parameters.
+        backscatter_value=(0.0, 0.31, 0.24),
+        atten_coeff=(0.05, 0.05, 0.05),
+        backscatter_coeff=(0.05, 0.05, 0.2),
+        depth_clipping_behavior="max",
     )
 
-    front: TiledCameraCfg = TiledCameraCfg(
-        prim_path="{ENV_REGEX_NS}/Robot/Arm/base/front_camera",
-        offset=TiledCameraCfg.OffsetCfg(
-            pos=(0.0, -0.5, 0.6), rot=(0.1650476, -0.9862856, 0.0, 0.0), convention="ros"
-        ),  # wxyz
-        data_types=["rgb"],
+    front: UWCameraCfg = UWCameraCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/rov_base/uw_camera",
+        offset=UWCameraCfg.OffsetCfg(pos=(0.3, 0.0, 0.1), rot=(0.5, -0.5, 0.5, -0.5), convention="ros"),
         spawn=sim_utils.PinholeCameraCfg(
-            focal_length=28.7,
-            focus_distance=400.0,
-            horizontal_aperture=38.11,  # For a 78° FOV (assuming square image)
-            clipping_range=(0.01, 50.0),
+            focal_length=2.1,
+            horizontal_aperture=4.2,
+            clipping_range=(0.1, 100.0),
             lock_camera=True,
         ),
-        width=640,
-        height=480,
-        update_period=1 / 30.0,  # 30FPS
-    )
-
-    light = AssetBaseCfg(
-        prim_path="{ENV_REGEX_NS}/Light",
-        spawn=sim_utils.DomeLightCfg(color=(0.75, 0.75, 0.75), intensity=3000.0),
+        width=1920,
+        height=1080,
+        update_period=1/30.0,
+        update_latest_camera_pose=True,
+        # OceanSim default underwater camera parameters.
+        backscatter_value=(0.0, 0.31, 0.24),
+        atten_coeff=(0.05, 0.05, 0.05),
+        backscatter_coeff=(0.05, 0.05, 0.2),
+        depth_clipping_behavior="max",
     )
 
     # ROV sensors
@@ -133,24 +135,7 @@ class ROVSingleArmTaskSceneCfg(InteractiveSceneCfg):
         debug_vis=True,
     )
 
-    uw_camera: UWCameraCfg = UWCameraCfg(
-        prim_path="{ENV_REGEX_NS}/Robot/rov_base/uw_camera",
-        offset=UWCameraCfg.OffsetCfg(pos=(0.3, 0.0, 0.1), rot=(1.0, 0.0, 0.0, 0.0), convention="ros"),
-        spawn=sim_utils.PinholeCameraCfg(
-            focal_length=2.1,
-            clipping_range=(0.1, 100.0),
-            lock_camera=True,
-        ),
-        width=1920,
-        height=1080,
-        update_period=1/30.0,
-        update_latest_camera_pose=True,
-        # coastal-water defaults; tune per scene
-        backscatter_value=(0.0, 0.31, 0.24),
-        atten_coeff=(0.05, 0.05, 0.05),
-        backscatter_coeff=(0.05, 0.05, 0.20),
-        depth_clipping_behavior="max",
-    )
+    
 
 
 @configclass
@@ -187,10 +172,7 @@ class ROVSingleArmObservationsCfg:
         joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel)
         actions = ObsTerm(func=mdp.last_action)
         wrist = ObsTerm(
-            func=mdp.image, params={"sensor_cfg": SceneEntityCfg("wrist"), "data_type": "rgb", "normalize": False}
-        )
-        front = ObsTerm(
-            func=mdp.image, params={"sensor_cfg": SceneEntityCfg("front"), "data_type": "rgb", "normalize": False}
+            func=mdp.image, params={"sensor_cfg": SceneEntityCfg("wrist"), "data_type": "uw_image", "normalize": False}
         )
         ee_frame_state = ObsTerm(
             func=mdp.ee_frame_state,
@@ -215,11 +197,11 @@ class ROVSingleArmObservationsCfg:
             func=mdp.dvl_beam_hit,
             params={"sensor_cfg": SceneEntityCfg("dvl")},
         )
-        uw_image = ObsTerm(
+        front = ObsTerm(
             func=mdp.image,
-            params={"sensor_cfg": SceneEntityCfg("uw_camera"), "data_type": "uw_image", "normalize": False},
+            params={"sensor_cfg": SceneEntityCfg("front"), "data_type": "uw_image", "normalize": False},
         )
-        sonar_image = ObsTerm(
+        sonar = ObsTerm(
             func=mdp.image,
             params={"sensor_cfg": SceneEntityCfg("sonar"), "data_type": "sonar_image", "normalize": False},
         )
@@ -274,7 +256,7 @@ class ROVSingleArmTaskEnvCfg(ManagerBasedRLEnvCfg):
 
         self.decimation = 1
         self.episode_length_s = 25.0
-        self.viewer.eye = (5.0, 0.6, 0.4)
+        self.viewer.eye = (-5.0, 0.0, 0.4)
         self.viewer.lookat = (-2.0, 0.0, -0.8)
 
         self.sim.physx.bounce_threshold_velocity = 0.01
