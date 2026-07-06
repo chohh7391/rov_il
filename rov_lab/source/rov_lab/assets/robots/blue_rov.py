@@ -45,14 +45,22 @@ BLUE_ROV_SINGLE_ARM_CFG = ArticulationCfg(
             effort_limit_sim=10,
             velocity_limit_sim=10,
             stiffness=17.8,
-            damping=0.60,
+            # Raised from 0.60 to damp the arm-joint resonance (zeta ~0.2 -> ~0.7). The lightly
+            # damped joints were excited by continuous base yaw (centripetal/gyroscopic load),
+            # feeding an oscillation back into the hull. See docs/rov-base-control-design.md.
+            # Starting target for typical link inertia; fine-tune in sim.
+            damping=2.0,
         ),
         "sts3215-arm": ImplicitActuatorCfg(
             joint_names_expr=["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll"],
             effort_limit_sim=10,
             velocity_limit_sim=10,
             stiffness=17.8,
-            damping=0.60,
+            # Raised from 0.60 to damp the arm-joint resonance (zeta ~0.2 -> ~0.7). The lightly
+            # damped joints were excited by continuous base yaw (centripetal/gyroscopic load),
+            # feeding an oscillation back into the hull. See docs/rov-base-control-design.md.
+            # Starting target for typical link inertia; fine-tune in sim.
+            damping=2.0,
         ),
     },
     soft_joint_pos_limit_factor=1.0,

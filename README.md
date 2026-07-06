@@ -32,6 +32,7 @@ git submodule update --init external_dependencies/IsaacLab
 git submodule update --init external_dependencies/OceanSim
 git submodule update --init external_dependencies/leisaac
 git submodule update --init external_dependencies/lerobot
+git submodule update --init external_dependencies/MarineGym
 ```
 
 Avoid:
