@@ -26,7 +26,7 @@
 | --- | --- | --- |
 | **단계 1 — 4-DOF 제어 리팩터** | ✅ 구현 (`rov_actions.py`) | 선형 PI + **attitude = 원본 각속도 서보**(roll/pitch 목표 0 → 감쇠, yaw는 rate 추종) + 비대칭 추력 클램프. **heading-hold·level-hold 스프링은 되돌림** — attitude position 스프링은 translation이 팔 COM으로 유발한 미세 tilt/yaw에 링잉함. 자동 수평·heading-hold는 Stage 2(Fossen) 이후 sim 튜닝으로 이관. **sim 런타임 검증은 미완.** |
 | **단계 3 — cfg 파라미터** | ✅ 구현 | I90 비대칭 추력한계(588/294·329·304 N), `lin_vel_scale`(1.5,1.0,0.7), yaw_rate 0.6 rad/s를 `ROVVelocityActionCfg` 기본값으로. |
-| **단계 2 — Fossen FF** | ⏸ 보류 | I90 유체계수(added-mass/damping/volume/coBM)가 카탈로그에 없음 + added-mass 유한차분은 sim 검증 필요 + 리지드바디 damping 0 전환이 검증 없이 발산 위험. Stage 1의 수동 복원이 대체 역할 수행 중. |
+| **단계 2 — Fossen FF** | ✅ 구현 (`template/mdp/hydrodynamics.py` + EventTerm) | MarineGym 수식을 순수함수 `compute_hydro_wrench`로 이식, `SingleArmEventCfg.apply_hydro` EventTerm(instantaneous+add)으로 배선. **안전 서브셋 기본 ON**: damping + 부력복원모멘트(→roll/pitch 자동수평); coriolis/added-mass/부력힘은 OFF 플래그. 계수는 BlueROV.yaml(현 USD와 일치). 순수함수 6개 sanity 통과(축플립·부호 OK). **sim 런타임 검증·리지드바디 damping 축소는 미완**(후속). |
 | **단계 3 — 에셋(질량/부력)** | ⏸ 보류 | 질량은 USD에 baked → 120 kg 매칭은 USD 편집 필요. 리지드바디 damping은 Fossen 도입 전까지 유지(수동 복원 감쇠원). |
 
 **인터페이스 결정:** `action_dim`은 6 유지(문서 §6의 대안). 키보드(14D)·`preprocess`(`==14`)·recorder·

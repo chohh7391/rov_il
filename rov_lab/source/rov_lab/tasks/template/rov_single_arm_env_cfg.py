@@ -157,6 +157,20 @@ class SingleArmEventCfg:
     # reset to default scene
     reset_all = EventTerm(func=mdp.reset_scene_to_default, mode="reset")
 
+    # MarineGym Fossen hydrodynamics on the ROV base, applied every step as an external wrench
+    # (instantaneous composer, auto-summed with the action-term servo's permanent wrench). Default
+    # term set = damping + buoyancy restoring moment (see mdp.HydroParamsCfg / docs).
+    apply_hydro = EventTerm(
+        func=mdp.apply_hydro_wrench,
+        mode="interval",
+        interval_range_s=(0.0, 0.0),
+        is_global_time=True,
+        params={
+            "asset_cfg": SceneEntityCfg("robot", body_names="rov_base"),
+            "hydro_cfg": mdp.HydroParamsCfg(),
+        },
+    )
+
 
 @configclass
 class ROVSingleArmObservationsCfg:
