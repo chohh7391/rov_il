@@ -13,3 +13,7 @@
 [submodule "external_dependencies/lerobot"]
 	path = external_dependencies/lerobot
 	url = https://github.com/huggingface/lerobot
+
+[submodule "external_dependencies/MarineGym"]
+	path = external_dependencies/MarineGym
+	url = https://github.com/Marine-RL/MarineGym.git

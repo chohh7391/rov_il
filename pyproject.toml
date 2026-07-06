@@ -40,6 +40,12 @@ url = "https://pypi.nvidia.com"
 override-dependencies = [
     "starlette==0.45.3",
 ]
+# flatdict 4.0.1 (transitive via isaaclab) imports pkg_resources in its setup.py,
+# but setuptools>=81 no longer ships pkg_resources. Constrain the setuptools used
+# in build-isolation environments so pkg_resources is available at build time.
+build-constraint-dependencies = [
+    "setuptools<81",
+]
 conflicts = [
     [
         { extra = "lab" },
