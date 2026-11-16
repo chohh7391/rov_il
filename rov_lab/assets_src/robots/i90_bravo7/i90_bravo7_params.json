@@ -1,0 +1,2248 @@
+{
+  "robot": "i90_bravo7",
+  "generator": "rov_lab/scripts/tools/make_i90_bravo7_urdf.py",
+  "spec": {
+    "length_m": 1.1,
+    "width_m": 0.7,
+    "height_m": 0.49,
+    "mass_air_kg": 120.0,
+    "payload_kg": 27.0,
+    "speed_kn": 3.0,
+    "depth_m": 500.0,
+    "thrust_kgf": {
+      "forward": 60.0,
+      "reverse": 30.0,
+      "lateral": 33.5,
+      "vertical": 31.0
+    },
+    "catalogue_manipulator": "up to 5-axis, optional",
+    "mounted_manipulator": "Bravo 7-class, 6 DOF + jaws, 9.5 kg air / 4.5 kg water (inside the 27 kg payload)",
+    "rho_water": 997.0,
+    "gravity": 9.81,
+    "target_net_buoyancy_kg": 0.5
+  },
+  "trim_solution": {
+    "foam_thickness_m": 0.12367,
+    "foam_density_kg_m3": 400.0,
+    "ballast_lead_kg": 12.2364,
+    "ballast_x_m": -0.22688,
+    "allocation_ref_x_m": -0.027182,
+    "horizontal_thruster_z_m": 0.00151
+  },
+  "vehicle": {
+    "mass_kg": 120.0,
+    "com_m": [
+      -0.075477,
+      -0.000333,
+      0.015088
+    ],
+    "cob_m": [
+      -0.051435,
+      -4.5e-05,
+      0.101518
+    ],
+    "cob_minus_com_m": [
+      0.024042,
+      0.000288,
+      0.08643
+    ],
+    "displaced_volume_m3": 0.12537613,
+    "net_buoyancy_kg": 5.0,
+    "inertia_about_com_kg_m2": [
+      [
+        7.554277,
+        -0.017981,
+        -0.563818
+      ],
+      [
+        -0.017981,
+        11.541798,
+        0.00345
+      ],
+      [
+        -0.563818,
+        0.00345,
+        14.072925
+      ]
+    ],
+    "principal_inertia_kg_m2": [
+      7.505794,
+      11.541865,
+      14.121342
+    ]
+  },
+  "system_stow": {
+    "mass_kg": 129.5,
+    "com_m": [
+      -0.027182,
+      0.000576,
+      0.00151
+    ],
+    "cob_m": [
+      -0.027182,
+      0.001646,
+      0.091075
+    ],
+    "cob_minus_com_m": [
+      0.0,
+      0.00107,
+      0.089565
+    ],
+    "displaced_volume_m3": 0.1303912,
+    "net_buoyancy_kg": 0.5,
+    "net_buoyancy_n": 4.905,
+    "righting_stiffness_nm_per_rad": 114.222,
+    "inertia_about_com_kg_m2": [
+      [
+        8.056567,
+        -0.074837,
+        0.508848
+      ],
+      [
+        -0.074837,
+        15.808453,
+        0.023647
+      ],
+      [
+        0.508848,
+        0.023647,
+        18.228122
+      ]
+    ],
+    "principal_inertia_kg_m2": [
+      8.030434,
+      15.809032,
+      18.253676
+    ]
+  },
+  "system_home": {
+    "mass_kg": 129.5,
+    "com_m": [
+      -0.022297,
+      -0.000309,
+      -0.000385
+    ],
+    "cob_m": [
+      -0.025349,
+      -4.3e-05,
+      0.089535
+    ],
+    "cob_minus_com_m": [
+      -0.003052,
+      0.000266,
+      0.08992
+    ],
+    "displaced_volume_m3": 0.1303912,
+    "net_buoyancy_kg": 0.5,
+    "net_buoyancy_n": 4.905,
+    "righting_stiffness_nm_per_rad": 114.675,
+    "inertia_about_com_kg_m2": [
+      [
+        8.041924,
+        -0.020108,
+        0.764026
+      ],
+      [
+        -0.020108,
+        16.953835,
+        0.004069
+      ],
+      [
+        0.764026,
+        0.004069,
+        19.009297
+      ]
+    ],
+    "principal_inertia_kg_m2": [
+      7.988908,
+      16.953877,
+      19.06227
+    ]
+  },
+  "links": {
+    "rov_base": {
+      "mass_kg": 116.1,
+      "com_in_link_m": [
+        -0.082256,
+        0.0,
+        0.017978
+      ],
+      "inertia_about_com_kg_m2": [
+        [
+          7.435245,
+          0.0,
+          -0.539677
+        ],
+        [
+          0.0,
+          10.975614,
+          0.0
+        ],
+        [
+          -0.539677,
+          0.0,
+          13.603537
+        ]
+      ],
+      "principal_inertia_kg_m2": [
+        7.388383,
+        10.975614,
+        13.650398
+      ],
+      "displaced_volume_m3": 0.12351788,
+      "frame_pos_in_rov_base_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "frame_quat_xyzw_in_rov_base": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "front_camera_link": {
+      "mass_kg": 1.2,
+      "com_in_link_m": [
+        -0.05,
+        0.0,
+        0.0
+      ],
+      "inertia_about_com_kg_m2": [
+        [
+          0.00096,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.00148,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.00148
+        ]
+      ],
+      "principal_inertia_kg_m2": [
+        0.00096,
+        0.00148,
+        0.00148
+      ],
+      "displaced_volume_m3": 0.00050265,
+      "frame_pos_in_rov_base_m": [
+        0.545,
+        0.0,
+        0.1
+      ],
+      "frame_quat_xyzw_in_rov_base": [
+        0.0,
+        0.173648,
+        0.0,
+        0.984808
+      ]
+    },
+    "dvl_link": {
+      "mass_kg": 2.5,
+      "com_in_link_m": [
+        0.0,
+        0.0,
+        -0.05
+      ],
+      "inertia_about_com_kg_m2": [
+        [
+          0.004724,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.004724,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.005281
+        ]
+      ],
+      "principal_inertia_kg_m2": [
+        0.004724,
+        0.004724,
+        0.005281
+      ],
+      "displaced_volume_m3": 0.00132732,
+      "frame_pos_in_rov_base_m": [
+        0.0,
+        0.0,
+        -0.225
+      ],
+      "frame_quat_xyzw_in_rov_base": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "pressure_sensor_link": {
+      "mass_kg": 0.2,
+      "com_in_link_m": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "inertia_about_com_kg_m2": [
+        [
+          2.3e-05,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          3.8e-05,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          3.8e-05
+        ]
+      ],
+      "principal_inertia_kg_m2": [
+        2.3e-05,
+        3.8e-05,
+        3.8e-05
+      ],
+      "displaced_volume_m3": 2.827e-05,
+      "frame_pos_in_rov_base_m": [
+        -0.545,
+        -0.2,
+        0.10133
+      ],
+      "frame_quat_xyzw_in_rov_base": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  },
+  "arm_links": {
+    "base_link": {
+      "mass_kg": 1.3,
+      "displaced_volume_m3": 0.0006334913430848242
+    },
+    "shoulder_link": {
+      "mass_kg": 1.6,
+      "displaced_volume_m3": 0.000940312481504863
+    },
+    "upper_arm_link": {
+      "mass_kg": 1.55,
+      "displaced_volume_m3": 0.0011653920050786878
+    },
+    "elbow_link": {
+      "mass_kg": 0.8,
+      "displaced_volume_m3": 0.0003526171805643237
+    },
+    "forearm_link": {
+      "mass_kg": 1.5,
+      "displaced_volume_m3": 0.0010709608130561057
+    },
+    "wrist_link": {
+      "mass_kg": 0.55,
+      "displaced_volume_m3": 0.00011850188802833817
+    },
+    "wrist_roll_link": {
+      "mass_kg": 0.55,
+      "displaced_volume_m3": 0.0002962547200708453
+    },
+    "jaw_base_link": {
+      "mass_kg": 1.15,
+      "displaced_volume_m3": 0.00028034669363962724
+    },
+    "finger_left_link": {
+      "mass_kg": 0.25,
+      "displaced_volume_m3": 7.858400518930128e-05
+    },
+    "finger_right_link": {
+      "mass_kg": 0.25,
+      "displaced_volume_m3": 7.858400518930128e-05
+    }
+  },
+  "parts": [
+    {
+      "name": "foam",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.97,
+        0.7,
+        0.12367
+      ],
+      "xyz": [
+        -0.045,
+        0.0,
+        0.183165
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 33.5886,
+      "displaced_volume_m3": 0.0839716,
+      "visual": true
+    },
+    {
+      "name": "foam_well_port",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.065,
+        0.12367
+      ],
+      "xyz": [
+        -0.027182,
+        0.17,
+        0.183165
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": -0.6566,
+      "displaced_volume_m3": -0.0016415,
+      "visual": false
+    },
+    {
+      "name": "foam_well_stbd",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.065,
+        0.12367
+      ],
+      "xyz": [
+        -0.027182,
+        -0.17,
+        0.183165
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": -0.6566,
+      "displaced_volume_m3": -0.0016415,
+      "visual": false
+    },
+    {
+      "name": "side_plate_port",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        1.1,
+        0.02,
+        0.33633
+      ],
+      "xyz": [
+        0.0,
+        0.34,
+        -0.046835
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 4.2176,
+      "displaced_volume_m3": 0.0044396,
+      "visual": true
+    },
+    {
+      "name": "skid_port",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        1.1,
+        0.07,
+        0.03
+      ],
+      "xyz": [
+        0.0,
+        0.315,
+        -0.23
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 2.1945,
+      "displaced_volume_m3": 0.00231,
+      "visual": true
+    },
+    {
+      "name": "side_plate_stbd",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        1.1,
+        0.02,
+        0.33633
+      ],
+      "xyz": [
+        0.0,
+        -0.34,
+        -0.046835
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 4.2176,
+      "displaced_volume_m3": 0.0044396,
+      "visual": true
+    },
+    {
+      "name": "skid_stbd",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        1.1,
+        0.07,
+        0.03
+      ],
+      "xyz": [
+        0.0,
+        -0.315,
+        -0.23
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 2.1945,
+      "displaced_volume_m3": 0.00231,
+      "visual": true
+    },
+    {
+      "name": "upper_crossbar_0",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.04,
+        0.66,
+        0.04
+      ],
+      "xyz": [
+        0.42,
+        0.0,
+        0.10133
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 1.0032,
+      "displaced_volume_m3": 0.001056,
+      "visual": true
+    },
+    {
+      "name": "upper_crossbar_1",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.04,
+        0.66,
+        0.04
+      ],
+      "xyz": [
+        -0.5,
+        0.0,
+        0.10133
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 1.0032,
+      "displaced_volume_m3": 0.001056,
+      "visual": true
+    },
+    {
+      "name": "lower_crossbar_0",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.04,
+        0.56,
+        0.03
+      ],
+      "xyz": [
+        -0.48,
+        0.0,
+        -0.23
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 0.6384,
+      "displaced_volume_m3": 0.000672,
+      "visual": true
+    },
+    {
+      "name": "lower_crossbar_1",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.04,
+        0.56,
+        0.03
+      ],
+      "xyz": [
+        -0.15,
+        0.0,
+        -0.23
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 0.6384,
+      "displaced_volume_m3": 0.000672,
+      "visual": true
+    },
+    {
+      "name": "lower_crossbar_2",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.04,
+        0.56,
+        0.03
+      ],
+      "xyz": [
+        0.275,
+        0.0,
+        -0.23
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 0.6384,
+      "displaced_volume_m3": 0.000672,
+      "visual": true
+    },
+    {
+      "name": "arm_bracket",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.015,
+        0.16,
+        0.13
+      ],
+      "xyz": [
+        0.3025,
+        0.0,
+        -0.17
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 0.8424,
+      "displaced_volume_m3": 0.000312,
+      "visual": true
+    },
+    {
+      "name": "mcc_housing",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.09,
+        0.47
+      ],
+      "xyz": [
+        -0.235,
+        0.0,
+        -0.025
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        0.0
+      ],
+      "mass_kg": 25.0,
+      "displaced_volume_m3": 0.01196,
+      "visual": true
+    },
+    {
+      "name": "tlc_housing",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.065,
+        0.26
+      ],
+      "xyz": [
+        0.15,
+        0.0,
+        -0.03
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        0.0
+      ],
+      "mass_kg": 8.0,
+      "displaced_volume_m3": 0.003451,
+      "visual": true
+    },
+    {
+      "name": "thr_fl",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.06,
+        0.14
+      ],
+      "xyz": [
+        0.312818,
+        0.235,
+        0.00151
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        -0.840461
+      ],
+      "mass_kg": 3.5,
+      "displaced_volume_m3": 0.0014,
+      "visual": true
+    },
+    {
+      "name": "thr_fr",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.06,
+        0.14
+      ],
+      "xyz": [
+        0.312818,
+        -0.235,
+        0.00151
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        0.840461
+      ],
+      "mass_kg": 3.5,
+      "displaced_volume_m3": 0.0014,
+      "visual": true
+    },
+    {
+      "name": "thr_rl",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.06,
+        0.14
+      ],
+      "xyz": [
+        -0.367182,
+        0.235,
+        0.00151
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        0.840461
+      ],
+      "mass_kg": 3.5,
+      "displaced_volume_m3": 0.0014,
+      "visual": true
+    },
+    {
+      "name": "thr_rr",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.06,
+        0.14
+      ],
+      "xyz": [
+        -0.367182,
+        -0.235,
+        0.00151
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        -0.840461
+      ],
+      "mass_kg": 3.5,
+      "displaced_volume_m3": 0.0014,
+      "visual": true
+    },
+    {
+      "name": "thr_vl",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.06,
+        0.11
+      ],
+      "xyz": [
+        -0.027182,
+        0.17,
+        0.183165
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 3.5,
+      "displaced_volume_m3": 0.0014,
+      "visual": true
+    },
+    {
+      "name": "thr_vr",
+      "link": "rov_base",
+      "kind": "cylinder",
+      "size": [
+        0.06,
+        0.11
+      ],
+      "xyz": [
+        -0.027182,
+        -0.17,
+        0.183165
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 3.5,
+      "displaced_volume_m3": 0.0014,
+      "visual": true
+    },
+    {
+      "name": "ballast_port",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.539523,
+        0.04,
+        0.025
+      ],
+      "xyz": [
+        -0.226881,
+        0.3,
+        -0.2025
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 6.1182,
+      "displaced_volume_m3": 0.0005395,
+      "visual": true
+    },
+    {
+      "name": "ballast_stbd",
+      "link": "rov_base",
+      "kind": "box",
+      "size": [
+        0.539523,
+        0.04,
+        0.025
+      ],
+      "xyz": [
+        -0.226881,
+        -0.3,
+        -0.2025
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 6.1182,
+      "displaced_volume_m3": 0.0005395,
+      "visual": true
+    },
+    {
+      "name": "camera_pod",
+      "link": "front_camera_link",
+      "kind": "cylinder",
+      "size": [
+        0.04,
+        0.1
+      ],
+      "xyz": [
+        -0.05,
+        0.0,
+        0.0
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        0.0
+      ],
+      "mass_kg": 1.2,
+      "displaced_volume_m3": 0.0005027,
+      "visual": true
+    },
+    {
+      "name": "dvl_pod",
+      "link": "dvl_link",
+      "kind": "cylinder",
+      "size": [
+        0.065,
+        0.1
+      ],
+      "xyz": [
+        0.0,
+        0.0,
+        -0.05
+      ],
+      "rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mass_kg": 2.5,
+      "displaced_volume_m3": 0.0013273,
+      "visual": true
+    },
+    {
+      "name": "pressure_pod",
+      "link": "pressure_sensor_link",
+      "kind": "cylinder",
+      "size": [
+        0.015,
+        0.04
+      ],
+      "xyz": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "rpy": [
+        0.0,
+        1.570796,
+        0.0
+      ],
+      "mass_kg": 0.2,
+      "displaced_volume_m3": 2.83e-05,
+      "visual": true
+    }
+  ],
+  "link_primitives": {
+    "rov_base": [
+      {
+        "kind": "box",
+        "size": [
+          0.97,
+          0.7,
+          0.12366953028982793
+        ],
+        "xyz": [
+          -0.04500000000000001,
+          0.0,
+          0.18316523485508604
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          1.1,
+          0.02,
+          0.33633046971017205
+        ],
+        "xyz": [
+          0.0,
+          0.33999999999999997,
+          -0.04683476514491396
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          1.1,
+          0.07,
+          0.03
+        ],
+        "xyz": [
+          0.0,
+          0.31499999999999995,
+          -0.22999999999999998
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          1.1,
+          0.02,
+          0.33633046971017205
+        ],
+        "xyz": [
+          0.0,
+          -0.33999999999999997,
+          -0.04683476514491396
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          1.1,
+          0.07,
+          0.03
+        ],
+        "xyz": [
+          0.0,
+          -0.31499999999999995,
+          -0.22999999999999998
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.04,
+          0.6599999999999999,
+          0.04
+        ],
+        "xyz": [
+          0.42,
+          0.0,
+          0.10133046971017207
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.04,
+          0.6599999999999999,
+          0.04
+        ],
+        "xyz": [
+          -0.5,
+          0.0,
+          0.10133046971017207
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.04,
+          0.5599999999999999,
+          0.03
+        ],
+        "xyz": [
+          -0.48,
+          0.0,
+          -0.22999999999999998
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.04,
+          0.5599999999999999,
+          0.03
+        ],
+        "xyz": [
+          -0.15,
+          0.0,
+          -0.22999999999999998
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.04,
+          0.5599999999999999,
+          0.03
+        ],
+        "xyz": [
+          0.27499999999999997,
+          0.0,
+          -0.22999999999999998
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.015,
+          0.16,
+          0.13
+        ],
+        "xyz": [
+          0.3025,
+          0.0,
+          -0.17
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.09,
+          0.47
+        ],
+        "xyz": [
+          -0.235,
+          0.0,
+          -0.025
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.065,
+          0.26
+        ],
+        "xyz": [
+          0.15000000000000002,
+          0.0,
+          -0.03
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.14
+        ],
+        "xyz": [
+          0.3128182028424897,
+          0.235,
+          0.0015098964975664981
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          -0.8404605587711186
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.14
+        ],
+        "xyz": [
+          0.3128182028424897,
+          -0.235,
+          0.0015098964975664981
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.8404605587711186
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.14
+        ],
+        "xyz": [
+          -0.36718179715751037,
+          0.235,
+          0.0015098964975664981
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.8404605587711186
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.14
+        ],
+        "xyz": [
+          -0.36718179715751037,
+          -0.235,
+          0.0015098964975664981
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          -0.8404605587711186
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.11
+        ],
+        "xyz": [
+          -0.02718179715751034,
+          0.17,
+          0.18316523485508604
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.11
+        ],
+        "xyz": [
+          -0.02718179715751034,
+          -0.17,
+          0.18316523485508604
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.5395230417028839,
+          0.04,
+          0.025
+        ],
+        "xyz": [
+          -0.22688131397959047,
+          0.3,
+          -0.20249999999999999
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.5395230417028839,
+          0.04,
+          0.025
+        ],
+        "xyz": [
+          -0.22688131397959047,
+          -0.3,
+          -0.20249999999999999
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "front_camera_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.04,
+          0.1
+        ],
+        "xyz": [
+          -0.05,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      }
+    ],
+    "dvl_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.065,
+          0.1
+        ],
+        "xyz": [
+          0.0,
+          0.0,
+          -0.05
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "pressure_sensor_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.015,
+          0.04
+        ],
+        "xyz": [
+          0.02,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      }
+    ],
+    "base_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.06,
+          0.01
+        ],
+        "xyz": [
+          0.0,
+          0.0,
+          0.005
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.046,
+          0.08
+        ],
+        "xyz": [
+          0.0,
+          0.0,
+          0.049999999999999996
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "shoulder_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.046,
+          0.054000000000000006
+        ],
+        "xyz": [
+          0.0,
+          0.0,
+          0.027000000000000003
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.046,
+          0.09
+        ],
+        "xyz": [
+          0.0,
+          0.0,
+          0.1
+        ],
+        "rpy": [
+          1.5707963267948966,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "upper_arm_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.03,
+          0.20800000000000002
+        ],
+        "xyz": [
+          0.15,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.046,
+          0.09
+        ],
+        "xyz": [
+          0.3,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          1.5707963267948966,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "elbow_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.046,
+          0.054000000000000006
+        ],
+        "xyz": [
+          0.07300000000000001,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      }
+    ],
+    "forearm_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.03,
+          0.174
+        ],
+        "xyz": [
+          0.087,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "size": [
+          0.046,
+          0.09
+        ],
+        "xyz": [
+          0.22,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          1.5707963267948966,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "wrist_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.04,
+          0.024000000000000007
+        ],
+        "xyz": [
+          0.058,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      }
+    ],
+    "wrist_roll_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.04,
+          0.06
+        ],
+        "xyz": [
+          0.03,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      }
+    ],
+    "jaw_base_link": [
+      {
+        "kind": "cylinder",
+        "size": [
+          0.04,
+          0.015
+        ],
+        "xyz": [
+          0.0075,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          1.5707963267948966,
+          0.0
+        ]
+      },
+      {
+        "kind": "box",
+        "size": [
+          0.035,
+          0.12,
+          0.05
+        ],
+        "xyz": [
+          0.0325,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "finger_left_link": [
+      {
+        "kind": "box",
+        "size": [
+          0.1,
+          0.02,
+          0.04
+        ],
+        "xyz": [
+          0.05,
+          0.01,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "finger_right_link": [
+      {
+        "kind": "box",
+        "size": [
+          0.1,
+          0.02,
+          0.04
+        ],
+        "xyz": [
+          0.05,
+          -0.01,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  "arm_mount": {
+    "joint": "arm_mount_joint",
+    "parent": "rov_base",
+    "child": "base_link",
+    "pos_m": [
+      0.31,
+      0.0,
+      -0.17
+    ],
+    "rpy_rad": [
+      0.0,
+      1.570796,
+      0.0
+    ],
+    "quat_xyzw": [
+      0.0,
+      0.707107,
+      0.0,
+      0.707107
+    ],
+    "shoulder_axis_m": [
+      0.5,
+      0.0,
+      -0.17
+    ]
+  },
+  "sensor_frames": {
+    "front_camera_link": {
+      "pos_m": [
+        0.545,
+        0.0,
+        0.1
+      ],
+      "quat_xyzw": [
+        0.0,
+        0.173648,
+        0.0,
+        0.984808
+      ],
+      "rpy_rad": [
+        0.0,
+        0.349066,
+        0.0
+      ]
+    },
+    "dvl_link": {
+      "pos_m": [
+        0.0,
+        0.0,
+        -0.225
+      ],
+      "quat_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rpy_rad": [
+        3.141593,
+        0.0,
+        0.0
+      ]
+    },
+    "pressure_sensor_link": {
+      "pos_m": [
+        -0.545,
+        -0.2,
+        0.10133
+      ],
+      "quat_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "rpy_rad": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "poses": {
+    "home": {
+      "base_yaw_joint": 0.0,
+      "shoulder_pitch_joint": 0.66454,
+      "elbow_pitch_joint": 2.37321,
+      "forearm_roll_joint": 0.0,
+      "wrist_pitch_joint": -1.72876,
+      "ee_roll_joint": 0.0,
+      "finger_left_joint": 0.03,
+      "finger_right_joint": 0.03
+    },
+    "stow": {
+      "base_yaw_joint": 1.5708,
+      "shoulder_pitch_joint": 0.4,
+      "elbow_pitch_joint": 2.4,
+      "forearm_roll_joint": 0.0,
+      "wrist_pitch_joint": 0.74,
+      "ee_roll_joint": 0.0,
+      "finger_left_joint": 0.005,
+      "finger_right_joint": 0.005
+    },
+    "home_ik": {
+      "reachable": true,
+      "q": {
+        "base_yaw_joint": 0.0,
+        "shoulder_pitch_joint": 0.66454,
+        "elbow_pitch_joint": 2.37321,
+        "forearm_roll_joint": 0.0,
+        "wrist_pitch_joint": -1.72876,
+        "ee_roll_joint": 0.0,
+        "finger_left_joint": 0.03,
+        "finger_right_joint": 0.03
+      },
+      "jaw_angle_from_down_deg": 75.0,
+      "elbow_up": false,
+      "tcp_m": [
+        0.95,
+        0.0,
+        -0.15
+      ],
+      "tcp_err_m": 0.0,
+      "jaw_tip_m": [
+        0.98864,
+        0.0,
+        -0.16035
+      ],
+      "jaw_axis": [
+        0.9659,
+        0.0,
+        -0.2588
+      ],
+      "elbow_axis_m": [
+        0.685,
+        0.0,
+        -0.4062
+      ],
+      "candidates_tried": 2
+    }
+  },
+  "reach": {
+    "seabed_ahead_of_bow_m": 0.25,
+    "seabed": {
+      "0.30": {
+        "target_tcp_m": [
+          0.8,
+          0.0,
+          -0.545
+        ],
+        "reachable": true,
+        "q": {
+          "base_yaw_joint": 0.0,
+          "shoulder_pitch_joint": -0.06119,
+          "elbow_pitch_joint": 2.15844,
+          "forearm_roll_joint": 0.0,
+          "wrist_pitch_joint": -1.92272,
+          "ee_roll_joint": 0.0,
+          "finger_left_joint": 0.03,
+          "finger_right_joint": 0.03
+        },
+        "jaw_angle_from_down_deg": 10.0,
+        "elbow_up": false,
+        "tcp_m": [
+          0.8,
+          0.0,
+          -0.545
+        ],
+        "tcp_err_m": 0.0,
+        "jaw_tip_m": [
+          0.80695,
+          0.0,
+          -0.58439
+        ],
+        "jaw_axis": [
+          0.1736,
+          0.0,
+          -0.9848
+        ],
+        "elbow_axis_m": [
+          0.4817,
+          0.0,
+          -0.4694
+        ],
+        "candidates_tried": 4
+      },
+      "0.45": {
+        "target_tcp_m": [
+          0.8,
+          0.0,
+          -0.695
+        ],
+        "reachable": true,
+        "q": {
+          "base_yaw_joint": 0.0,
+          "shoulder_pitch_joint": 1.68771,
+          "elbow_pitch_joint": -1.68131,
+          "forearm_roll_joint": 0.0,
+          "wrist_pitch_joint": -0.0064,
+          "ee_roll_joint": 0.0,
+          "finger_left_joint": 0.03,
+          "finger_right_joint": 0.03
+        },
+        "jaw_angle_from_down_deg": 0.0,
+        "elbow_up": true,
+        "tcp_m": [
+          0.8,
+          0.0,
+          -0.695
+        ],
+        "tcp_err_m": 0.0,
+        "jaw_tip_m": [
+          0.8,
+          0.0,
+          -0.735
+        ],
+        "jaw_axis": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "elbow_axis_m": [
+          0.798,
+          0.0,
+          -0.135
+        ],
+        "candidates_tried": 1
+      },
+      "0.60": {
+        "target_tcp_m": [
+          0.8,
+          0.0,
+          -0.845
+        ],
+        "reachable": true,
+        "q": {
+          "base_yaw_joint": 0.0,
+          "shoulder_pitch_joint": 1.17433,
+          "elbow_pitch_joint": -1.10155,
+          "forearm_roll_joint": 0.0,
+          "wrist_pitch_joint": -0.07278,
+          "ee_roll_joint": 0.0,
+          "finger_left_joint": 0.03,
+          "finger_right_joint": 0.03
+        },
+        "jaw_angle_from_down_deg": 0.0,
+        "elbow_up": true,
+        "tcp_m": [
+          0.8,
+          0.0,
+          -0.845
+        ],
+        "tcp_err_m": 0.0,
+        "jaw_tip_m": [
+          0.8,
+          0.0,
+          -0.885
+        ],
+        "jaw_axis": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "elbow_axis_m": [
+          0.7767,
+          0.0,
+          -0.2858
+        ],
+        "candidates_tried": 1
+      }
+    },
+    "forward_ahead_of_bow_m": 0.5,
+    "forward": {
+      "target_tcp_m": [
+        1.05,
+        0.0,
+        -0.245
+      ],
+      "reachable": true,
+      "q": {
+        "base_yaw_joint": 0.0,
+        "shoulder_pitch_joint": 0.24827,
+        "elbow_pitch_joint": 2.06266,
+        "forearm_roll_joint": 0.0,
+        "wrist_pitch_joint": -0.74013,
+        "ee_roll_joint": 0.0,
+        "finger_left_joint": 0.03,
+        "finger_right_joint": 0.03
+      },
+      "jaw_angle_from_down_deg": 90.0,
+      "elbow_up": false,
+      "tcp_m": [
+        1.05,
+        0.0,
+        -0.245
+      ],
+      "tcp_err_m": 0.0,
+      "jaw_tip_m": [
+        1.09,
+        0.0,
+        -0.245
+      ],
+      "jaw_axis": [
+        1.0,
+        0.0,
+        -0.0
+      ],
+      "elbow_axis_m": [
+        0.5737,
+        0.0,
+        -0.4608
+      ],
+      "candidates_tried": 2
+    },
+    "seabed_envelope_ahead_of_bow_m": {
+      "0.30": [
+        -0.3,
+        0.66
+      ],
+      "0.45": [
+        -0.3,
+        0.6
+      ],
+      "0.60": [
+        -0.3,
+        0.47
+      ]
+    }
+  },
+  "pose_checks": {
+    "home": {
+      "overlaps": {},
+      "within_5mm": {},
+      "jaw_tip_m": [
+        0.9886,
+        0.0,
+        -0.1604
+      ],
+      "arm_bbox_m": {
+        "min": [
+          0.31,
+          -0.06,
+          -0.452
+        ],
+        "max": [
+          0.994,
+          0.06,
+          -0.042
+        ]
+      }
+    },
+    "stow": {
+      "overlaps": {},
+      "within_5mm": {},
+      "jaw_tip_m": [
+        0.6154,
+        -0.2833,
+        -0.17
+      ],
+      "arm_bbox_m": {
+        "min": [
+          0.31,
+          -0.291,
+          -0.23
+        ],
+        "max": [
+          0.77,
+          0.322,
+          -0.11
+        ]
+      }
+    }
+  },
+  "hydro_params": {
+    "volume": 0.1253761,
+    "co_bm": 0.09315,
+    "rho": 997.0,
+    "g": 9.81,
+    "added_mass": [
+      44.288,
+      95.993,
+      188.293,
+      0.749,
+      5.361,
+      1.549
+    ],
+    "linear_damping": [
+      47.883,
+      75.244,
+      107.491,
+      5.895,
+      11.797,
+      9.542
+    ],
+    "quadratic_damping": [
+      216.006,
+      339.438,
+      484.912,
+      6.446,
+      20.963,
+      16.434
+    ]
+  },
+  "hydro_derivation": {
+    "top_speed_m_s": 1.5433333333333334,
+    "forward_thrust_n": 588.399,
+    "lin_over_quad_m_s": 0.2216721672167217,
+    "projected_area_m2": {
+      "x": 0.34299999999999997,
+      "y": 0.539,
+      "z": 0.77
+    },
+    "drag_coefficient_quadratic_part": 1.263301011262912,
+    "per_area_quadratic_n_s2_m4": 629.7555541145616,
+    "per_area_linear_n_s_m3": 139.5992784973423,
+    "lamb_alpha_beta_gamma": [
+      0.3671542421310507,
+      0.6553464991660493,
+      0.977499254641899
+    ],
+    "lamb_sum_check": 1.999999995938999,
+    "inscribed_ellipsoid_mass_kg": 196.96115657913842
+  },
+  "hydro_co_bm_hull_only_m": 0.08643,
+  "steady_state": {
+    "surge_fwd_588N": 1.5433,
+    "surge_rev_294N": 1.0615,
+    "sway_329N": 0.8792,
+    "heave_304N": 0.6887,
+    "yaw_rate_at_thruster_yaw_torque_rad_s": 3.0395,
+    "yaw_rate_at_100Nm_rad_s": 2.1935
+  },
+  "thrusters": [
+    {
+      "name": "thr_fl",
+      "pos_m": [
+        0.312818,
+        0.235,
+        0.00151
+      ],
+      "direction": [
+        0.66712,
+        -0.74495,
+        0.0
+      ],
+      "max_forward_n": 220.5,
+      "max_reverse_n": 110.25
+    },
+    {
+      "name": "thr_fr",
+      "pos_m": [
+        0.312818,
+        -0.235,
+        0.00151
+      ],
+      "direction": [
+        0.66712,
+        0.74495,
+        0.0
+      ],
+      "max_forward_n": 220.5,
+      "max_reverse_n": 110.25
+    },
+    {
+      "name": "thr_rl",
+      "pos_m": [
+        -0.367182,
+        0.235,
+        0.00151
+      ],
+      "direction": [
+        0.66712,
+        0.74495,
+        0.0
+      ],
+      "max_forward_n": 220.5,
+      "max_reverse_n": 110.25
+    },
+    {
+      "name": "thr_rr",
+      "pos_m": [
+        -0.367182,
+        -0.235,
+        0.00151
+      ],
+      "direction": [
+        0.66712,
+        -0.74495,
+        0.0
+      ],
+      "max_forward_n": 220.5,
+      "max_reverse_n": 110.25
+    },
+    {
+      "name": "thr_vl",
+      "pos_m": [
+        -0.027182,
+        0.17,
+        0.183165
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "max_forward_n": 152.003,
+      "max_reverse_n": 76.002
+    },
+    {
+      "name": "thr_vr",
+      "pos_m": [
+        -0.027182,
+        -0.17,
+        0.183165
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "max_forward_n": 152.003,
+      "max_reverse_n": 76.002
+    }
+  ],
+  "thruster_fit": {
+    "alpha_rad": 0.840461,
+    "t_fwd_n": 220.49975,
+    "t_rev_n": 110.249875,
+    "kappa": 0.5,
+    "eta_vertical": 0.689357
+  },
+  "allocation_ref_m": [
+    -0.027182,
+    0.0,
+    0.00151
+  ],
+  "axis_capability_n": {
+    "+x": 588.399,
+    "-x": 294.2,
+    "+y": 328.523,
+    "-y": 328.523,
+    "+z": 304.006,
+    "-z": 152.003,
+    "yaw": 180.835
+  },
+  "axis_thrust_match": {
+    "+x": {
+      "model_kgf": 60.0,
+      "catalogue_kgf": 60.0,
+      "rel_err": 0.0
+    },
+    "-x": {
+      "model_kgf": 30.0,
+      "catalogue_kgf": 30.0,
+      "rel_err": 0.0
+    },
+    "+y": {
+      "model_kgf": 33.5,
+      "catalogue_kgf": 33.5,
+      "rel_err": 0.0
+    },
+    "-y": {
+      "model_kgf": 33.5,
+      "catalogue_kgf": 33.5,
+      "rel_err": 0.0
+    },
+    "+z": {
+      "model_kgf": 31.0,
+      "catalogue_kgf": 31.0,
+      "rel_err": 0.0
+    },
+    "-z": {
+      "model_kgf": 15.5,
+      "catalogue_kgf": null,
+      "servo_cap_kgf": 31.0,
+      "rel_err_vs_servo_cap": -0.5
+    }
+  }
+}
