@@ -1,9 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import torch
-from isaaclab.assets import Articulation, RigidObject
-from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
 from isaaclab.managers import SceneEntityCfg
-from isaaclab.sensors import FrameTransformer
 from rov_lab.utils.tensor import as_torch
+
+if TYPE_CHECKING:  # runtime classes pull in pxr; keep the task config parseable before Kit starts
+    from isaaclab.assets import Articulation, RigidObject
+    from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
+    from isaaclab.sensors import FrameTransformer
 
 
 def resolve_target_color_id(env: ManagerBasedRLEnv | DirectRLEnv) -> torch.Tensor:

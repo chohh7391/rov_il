@@ -28,7 +28,9 @@ class ROVKeyboard(Device):
         self.asset_name = "robot"
         self.robot_asset = self.env.scene[self.asset_name]
 
-        self.target_frame = "gripper"
+        # end-effector body from the env's arm teleop spec (SO-101: "gripper", Bravo 7-class: "jaw_base_link")
+        spec = getattr(self.env.cfg, "arm_teleop_spec", None)
+        self.target_frame = spec.ee_body_name if spec is not None else "gripper"
         body_idxs, _ = self.robot_asset.find_bodies(self.target_frame)
         self.target_frame_idx = body_idxs[0]
         self.base_frame = "rov_base"

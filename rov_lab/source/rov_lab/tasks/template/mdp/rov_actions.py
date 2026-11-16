@@ -29,8 +29,6 @@ from isaaclab.assets import Articulation
 from isaaclab.managers.action_manager import ActionTerm, ActionTermCfg
 from isaaclab.envs.mdp.actions.actions_cfg import DifferentialInverseKinematicsActionCfg
 from isaaclab.envs.mdp.actions.actions_cfg import RelativeJointPositionActionCfg
-from isaaclab.envs.mdp.actions.joint_actions import RelativeJointPositionAction
-from isaaclab.envs.mdp.actions.task_space_actions import DifferentialInverseKinematicsAction
 from isaaclab.utils import configclass
 import isaaclab.utils.math as math_utils
 from rov_lab.utils.tensor import as_torch
@@ -374,74 +372,94 @@ class ROVVelocityActionCfg(ActionTermCfg):
     """
 
 
-class ROVRelativeIKAction(DifferentialInverseKinematicsAction):
-    """Differential IK action that idles as joint hold when no arm command is active."""
-
-    cfg: ROVRelativeIKActionCfg
-
-    def __init__(self, cfg: ROVRelativeIKActionCfg, env: ManagerBasedEnv):
-        super().__init__(cfg, env)
-        self._inactive_deadband = float(cfg.inactive_deadband)
-        self._joint_pos_hold_target = as_torch(self._asset.data.joint_pos)[:, self._joint_ids].clone()
-
-    def apply_actions(self):
-        if torch.all(torch.abs(self._raw_actions) <= self._inactive_deadband):
-            self._asset.set_joint_position_target_index(target=self._joint_pos_hold_target, joint_ids=self._joint_ids)
-            return
-
-        super().apply_actions()
-        self._joint_pos_hold_target[:] = as_torch(self._asset.data.joint_pos_target)[:, self._joint_ids]
-
-    def reset(self, env_ids: Sequence[int] | None = None) -> None:
-        super().reset(env_ids)
-        if env_ids is None:
-            self._joint_pos_hold_target[:] = as_torch(self._asset.data.joint_pos)[:, self._joint_ids]
-        else:
-            self._joint_pos_hold_target[env_ids] = as_torch(self._asset.data.joint_pos)[env_ids][:, self._joint_ids]
-
-
 @configclass
 class ROVRelativeIKActionCfg(DifferentialInverseKinematicsActionCfg):
-    """Configuration for :class:`ROVRelativeIKAction`."""
+    """Configuration for :class:`~rov_lab.tasks.template.mdp.rov_actions_impl.ROVRelativeIKAction`."""
 
-    class_type: type[ActionTerm] = ROVRelativeIKAction
+    class_type: type[ActionTerm] | str = "{DIR}.rov_actions_impl:ROVRelativeIKAction"
 
     inactive_deadband: float = 1.0e-6
     """Raw action magnitude below which the arm idles with joint-position hold."""
 
 
-class ROVRelativeJointPositionAction(RelativeJointPositionAction):
-    """Relative joint action that holds the last target when no command is active."""
-
-    cfg: ROVRelativeJointPositionActionCfg
-
-    def __init__(self, cfg: ROVRelativeJointPositionActionCfg, env: ManagerBasedEnv):
-        super().__init__(cfg, env)
-        self._inactive_deadband = float(cfg.inactive_deadband)
-        self._joint_pos_hold_target = as_torch(self._asset.data.joint_pos)[:, self._joint_ids].clone()
-
-    def apply_actions(self):
-        if torch.all(torch.abs(self._raw_actions) <= self._inactive_deadband):
-            self._asset.set_joint_position_target_index(target=self._joint_pos_hold_target, joint_ids=self._joint_ids)
-            return
-
-        current_actions = self.processed_actions + as_torch(self._asset.data.joint_pos)[:, self._joint_ids]
-        self._asset.set_joint_position_target_index(target=current_actions, joint_ids=self._joint_ids)
-        self._joint_pos_hold_target[:] = current_actions
-
-    def reset(self, env_ids: Sequence[int] | None = None) -> None:
-        super().reset(env_ids)
-        if env_ids is None:
-            self._joint_pos_hold_target[:] = as_torch(self._asset.data.joint_pos)[:, self._joint_ids]
-        else:
-            self._joint_pos_hold_target[env_ids] = as_torch(self._asset.data.joint_pos)[env_ids][:, self._joint_ids]
-
-
 @configclass
 class ROVRelativeJointPositionActionCfg(RelativeJointPositionActionCfg):
-    """Configuration for :class:`ROVRelativeJointPositionAction`."""
+    """Configuration for :class:`~rov_lab.tasks.template.mdp.rov_actions_impl.ROVRelativeJointPositionAction`."""
 
-    class_type: type[ActionTerm] = ROVRelativeJointPositionAction
+    class_type: type[ActionTerm] | str = "{DIR}.rov_actions_impl:ROVRelativeJointPositionAction"
 
     inactive_deadband: float = 1.0e-6
     """Raw action magnitude below which the joint action holds its last target."""
+
+
+class ROVParallelGripperAction(ActionTerm):
+    """One command driving every finger joint of a parallel gripper to the same opening.
+
+    * ``mode="relative"``: the action is an opening rate; each step the finger target moves by
+      ``scale * action`` (m or rad per step) and is held when the action is inside the deadband. Suits keyboard
+      keys and haptic buttons that are held down.
+    * ``mode="absolute"``: the action in ``[-1, 1]`` maps linearly to ``[closed, open]`` (each finger's soft
+      joint limits). Suits policies.
+    """
+
+    cfg: ROVParallelGripperActionCfg
+    _asset: Articulation
+
+    def __init__(self, cfg: ROVParallelGripperActionCfg, env: ManagerBasedEnv):
+        super().__init__(cfg, env)
+        self._joint_ids, self._joint_names = self._asset.find_joints(cfg.joint_names, preserve_order=True)
+        limits = as_torch(self._asset.data.soft_joint_pos_limits)[:, self._joint_ids]  # (N, J, 2)
+        self._lower = limits[..., 0].clone()
+        self._upper = limits[..., 1].clone()
+        self._raw_actions = torch.zeros(self.num_envs, 1, device=self.device)
+        self._target = as_torch(self._asset.data.joint_pos)[:, self._joint_ids].clone()
+
+    @property
+    def action_dim(self) -> int:
+        return 1
+
+    @property
+    def raw_actions(self) -> torch.Tensor:
+        return self._raw_actions
+
+    @property
+    def processed_actions(self) -> torch.Tensor:
+        return self._target
+
+    def process_actions(self, actions: torch.Tensor) -> None:
+        self._raw_actions[:] = actions
+        a = actions[:, :1]
+        if self.cfg.mode == "absolute":
+            frac = (a.clamp(-1.0, 1.0) + 1.0) * 0.5
+            self._target = self._lower + frac * (self._upper - self._lower)
+        else:
+            moved = torch.maximum(torch.minimum(self._target + self.cfg.scale * a, self._upper), self._lower)
+            self._target = torch.where(a.abs() > self.cfg.deadband, moved, self._target)
+
+    def apply_actions(self) -> None:
+        self._asset.set_joint_position_target_index(target=self._target, joint_ids=self._joint_ids)
+
+    def reset(self, env_ids: Sequence[int] | None = None) -> None:
+        if env_ids is None:
+            env_ids = slice(None)
+        self._raw_actions[env_ids] = 0.0
+        self._target[env_ids] = as_torch(self._asset.data.joint_pos)[env_ids][:, self._joint_ids]
+
+
+@configclass
+class ROVParallelGripperActionCfg(ActionTermCfg):
+    """Configuration for :class:`ROVParallelGripperAction`."""
+
+    class_type: type[ActionTerm] = ROVParallelGripperAction
+
+    joint_names: list[str] = MISSING
+    """Finger joints (all receive the same target)."""
+
+    mode: str = "relative"
+    """``"relative"`` (opening rate) or ``"absolute"`` (``[-1, 1]`` -> ``[closed, open]``)."""
+
+    scale: float = 0.002
+    """Relative mode: finger target change per step per unit action (m or rad)."""
+
+    deadband: float = 1.0e-6
+    """Relative mode: action magnitude below which the target is held."""

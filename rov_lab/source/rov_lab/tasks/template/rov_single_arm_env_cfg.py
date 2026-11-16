@@ -18,7 +18,7 @@ from isaaclab.sensors import FrameTransformerCfg, OffsetCfg
 from isaaclab.utils import configclass
 from isaaclab.sim.spawners.from_files.from_files_cfg import GroundPlaneCfg
 
-from rov_lab.devices.action_process import init_action_cfg, preprocess_device_action
+from rov_lab.devices.action_process import SO101_TELEOP_SPEC, ArmTeleopSpec, init_action_cfg, preprocess_device_action
 from . import mdp
 from rov_lab.assets.robots import BLUE_ROV_SINGLE_ARM_CFG
 from isaaclab_physx.physics import PhysxCfg
@@ -221,6 +221,9 @@ class ROVSingleArmTaskEnvCfg(ManagerBasedRLEnvCfg):
     task_description: str = MISSING
     """Task description stored with recorded demonstrations."""
 
+    arm_teleop_spec: ArmTeleopSpec = SO101_TELEOP_SPEC
+    """Arm-specific teleop mapping (IK joints, end-effector body, gripper type)."""
+
     def __post_init__(self) -> None:
         super().__post_init__()
 
@@ -237,7 +240,7 @@ class ROVSingleArmTaskEnvCfg(ManagerBasedRLEnvCfg):
 
     def use_teleop_device(self, teleop_device) -> None:
         self.task_type = teleop_device
-        self.actions = init_action_cfg(self.actions, device=teleop_device)
+        self.actions = init_action_cfg(self.actions, device=teleop_device, spec=self.arm_teleop_spec)
         if teleop_device in ["keyboard", "gamepad", "so101_state_machine"]:
             self.scene.robot.spawn.rigid_props.disable_gravity = True
 

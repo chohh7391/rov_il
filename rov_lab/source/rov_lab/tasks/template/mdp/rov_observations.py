@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import torch
 import isaaclab.utils.math as math_utils
-from isaaclab.assets import Articulation
-from isaaclab.envs import ManagerBasedEnv
 from isaaclab.managers import SceneEntityCfg
-from isaaclab.sensors import Camera, FrameTransformer, RayCaster
 
 from rov_lab.assets.sensors import DVLCfg, UWCameraCfg, uw_render
 from rov_lab.assets.sensors.barometer_model import barometer_pressure_model
@@ -19,6 +18,11 @@ from rov_lab.assets.sensors.dvl import (
     janus_noise_transform,
 )
 from rov_lab.utils.tensor import as_torch
+
+if TYPE_CHECKING:  # runtime classes pull in pxr; keep this module importable before Kit starts
+    from isaaclab.assets import Articulation
+    from isaaclab.envs import ManagerBasedEnv
+    from isaaclab.sensors import Camera, FrameTransformer, RayCaster
 
 
 # ---------------------------------------------------------------------------------------------------- arm
