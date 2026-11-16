@@ -1,0 +1,197 @@
+{
+  "_comment": "Third-party assets used by rov_lab scenes. Fetched by rov_lab/scripts/tools/fetch_third_party_assets.py into rov_lab/assets/third_party/ (not tracked in Git). Licenses were checked against the Gazebo Fuel API, the repository LICENSE files and the Poly Haven API on 2026-11-16. Keep NOTICE and ATTRIBUTION.md in this folder in sync.",
+  "fuel": [
+    {
+      "id": "ocean_floor_shipwreck",
+      "owner": "OpenRobotics",
+      "name": "OceanFloorShipwreck",
+      "version": 2,
+      "license": "CC-BY-4.0",
+      "author": "Open Robotics"
+    },
+    {
+      "id": "ocean_rock_01",
+      "owner": "Cole",
+      "name": "Ocean Rock 01",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "ocean_rock_02",
+      "owner": "Cole",
+      "name": "Ocean Rock 02",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "ocean_rock_03",
+      "owner": "Cole",
+      "name": "Ocean Rock 03",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "ocean_rock_04",
+      "owner": "Cole",
+      "name": "Ocean Rock 04",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "ocean_rock_05",
+      "owner": "Cole",
+      "name": "Ocean Rock 05",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "ocean_rock_06",
+      "owner": "Cole",
+      "name": "Ocean Rock 06",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "ocean_rock_07",
+      "owner": "Cole",
+      "name": "Ocean Rock 07",
+      "version": 1,
+      "license": "CC-BY-4.0",
+      "author": "Cole (Gazebo Fuel)"
+    },
+    {
+      "id": "portuguese_ledge",
+      "owner": "OpenRobotics",
+      "name": "Portuguese Ledge",
+      "version": 3,
+      "license": "CC0-1.0",
+      "author": "Open Robotics; bathymetry by Dr. Dave Caress and the MBARI Seafloor Mapping Lab"
+    }
+  ],
+  "github": [
+    {
+      "id": "uuv_simulator",
+      "repo": "uuvsimulator/uuv_simulator",
+      "commit": "bfb40cb153684a0703173117b6bbf4258e8e71c5",
+      "license": "Apache-2.0",
+      "files": [
+        "LICENSE",
+        "3rd-party-licenses.txt",
+        "NOTICE",
+        "uuv_gazebo_worlds/models/rov_bop_panel/model.config",
+        "uuv_gazebo_worlds/models/rov_bop_panel/model.sdf",
+        "uuv_gazebo_worlds/models/rov_bop_panel/meshes/BOP_Panel.dae",
+        "uuv_gazebo_worlds/models/rov_bop_panel/meshes/SmallValve.dae",
+        "uuv_gazebo_worlds/models/rov_bop_panel/meshes/Valve.dae",
+        "uuv_gazebo_worlds/models/rov_bop_panel/meshes/License and source texture.txt",
+        "uuv_gazebo_worlds/models/hot_stab/model.config",
+        "uuv_gazebo_worlds/models/hot_stab/model.sdf",
+        "uuv_gazebo_worlds/models/hot_stab/meshes/HotStab.dae",
+        "uuv_gazebo_worlds/models/torque_tool/model.config",
+        "uuv_gazebo_worlds/models/torque_tool/model.sdf",
+        "uuv_gazebo_worlds/models/torque_tool/meshes/TorqueTool.dae"
+      ],
+      "_excluded": "rov_bop_panel/meshes/metal_bare_0045_01.jpg is under the texturelib.com license (see 'License and source texture.txt'); it is replaced with a CC0 Poly Haven texture."
+    },
+    {
+      "id": "dave",
+      "repo": "Field-Robotics-Lab/dave",
+      "commit": "e54ea16bdaf7d6dbb466cf141846a03f284a44dd",
+      "license": "Apache-2.0",
+      "files": [
+        "LICENSE",
+        "models/dave_object_models/models/electrical_panel/model.config",
+        "models/dave_object_models/models/electrical_panel/model.sdf",
+        "models/dave_object_models/models/electrical_panel/meshes/Underwater-Frame.dae",
+        "models/dave_object_models/models/electrical_panel/meshes/COLLISION-Underwater-Frame.dae",
+        "models/dave_object_models/models/electrical_panel/meshes/Electrical-Socket.dae",
+        "models/dave_object_models/models/electrical_panel/materials/textures/Underwater-Table.png",
+        "models/dave_object_models/models/electrical_panel/materials/textures/Outer-Plug.png",
+        "models/dave_object_models/models/f_to_m_plug/model.config",
+        "models/dave_object_models/models/f_to_m_plug/model.sdf",
+        "models/dave_object_models/models/f_to_m_plug/meshes/Plug.dae",
+        "models/dave_object_models/models/f_to_m_plug/meshes/COLLISION-Plug.dae",
+        "models/dave_object_models/models/f_to_m_plug/materials/textures/Plug.png",
+        "models/dave_object_models/models/f_to_m_receptacle/model.config",
+        "models/dave_object_models/models/f_to_m_receptacle/model.sdf",
+        "models/dave_object_models/models/f_to_m_receptacle/meshes/Plug-Receptacle.dae",
+        "models/dave_object_models/models/f_to_m_receptacle/meshes/COLLISION-Plug-Receptacle.dae",
+        "models/dave_object_models/models/f_to_m_receptacle/materials/textures/Plug-Receptacle.png",
+        "models/dave_object_models/models/m_to_f_plug/model.config",
+        "models/dave_object_models/models/m_to_f_plug/model.sdf",
+        "models/dave_object_models/models/m_to_f_plug/meshes/Electrical-Plug.dae",
+        "models/dave_object_models/models/m_to_f_plug/materials/textures/Inner-Plug.png",
+        "models/dave_object_models/models/m_to_f_socket/model.config",
+        "models/dave_object_models/models/m_to_f_socket/model.sdf",
+        "models/dave_object_models/models/m_to_f_socket/meshes/Electrical-Socket.dae",
+        "models/dave_object_models/models/m_to_f_socket/materials/textures/Outer-Plug.png",
+        "models/dave_object_models/models/socket_box/model.config",
+        "models/dave_object_models/models/socket_box/model.sdf",
+        "models/dave_object_models/models/socket_box/meshes/Electrical-Socket.dae",
+        "models/dave_object_models/models/socket_box/materials/textures/Outer-Plug.png",
+        "models/dave_object_models/models/niskin/model.config",
+        "models/dave_object_models/models/niskin/model.sdf",
+        "urdf/manipulators/plug_and_socket_description/urdf/f_to_m_receptacle.xacro",
+        "urdf/manipulators/plug_and_socket_description/urdf/m_to_f_socket.xacro",
+        "urdf/manipulators/plug_and_socket_description/urdf/socket_platform.xacro",
+        "gazebo/dave_gazebo_model_plugins/src/plug_and_socket_plugin.cc"
+      ]
+    }
+  ],
+  "polyhaven": [
+    {
+      "id": "coast_sand_01",
+      "resolution": "2k",
+      "maps": [
+        "Diffuse",
+        "nor_gl",
+        "Rough",
+        "AO"
+      ],
+      "license": "CC0-1.0",
+      "use": "seabed sand"
+    },
+    {
+      "id": "coral_mud_01",
+      "resolution": "2k",
+      "maps": [
+        "Diffuse",
+        "nor_gl",
+        "Rough",
+        "AO"
+      ],
+      "license": "CC0-1.0",
+      "use": "seabed mud"
+    },
+    {
+      "id": "rock_boulder_dry",
+      "resolution": "2k",
+      "maps": [
+        "Diffuse",
+        "nor_gl",
+        "Rough",
+        "AO"
+      ],
+      "license": "CC0-1.0",
+      "use": "rocks"
+    },
+    {
+      "id": "rusty_painted_metal",
+      "resolution": "2k",
+      "maps": [
+        "Diffuse",
+        "nor_gl",
+        "Rough",
+        "AO"
+      ],
+      "license": "CC0-1.0",
+      "use": "subsea panel (replaces the texturelib texture)"
+    }
+  ]
+}

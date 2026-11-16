@@ -1,0 +1,42 @@
+rov_lab third-party asset notices
+==================================
+
+The subsea work-site assets built by rov_lab/scripts/tools/build_subsea_assets.py (published with the rov_lab
+asset dataset, not stored in this repository) contain material derived from the Apache-2.0 projects below. The
+full license text is in LICENSE-Apache-2.0.txt in this folder. Sources, pinned commits and the exact files used
+are listed in manifest.json. Creative Commons and CC0 material is credited in ATTRIBUTION.md.
+
+--------------------------------------------------------------------------------------------------------------------
+UUV Simulator
+  https://github.com/uuvsimulator/uuv_simulator  (commit bfb40cb153684a0703173117b6bbf4258e8e71c5)
+  Copyright 2016 The UUV Simulator Authors. Licensed under the Apache License, Version 2.0.
+
+  Used: uuv_gazebo_worlds/models/rov_bop_panel, hot_stab, torque_tool (meshes, masses, joint layout).
+
+  NOTICE file of the project (reproduced as required by section 4(d) of the license):
+
+    # This is the official list of UUV Simulator copyright holders and authors.
+    Robert Bosch GmbH
+        Luiz Ricardo Douat
+        Musa Morena Marcusso Manhaes
+        Sebastian Scherer
+        Thomas Winkler
+    William Baker
+    (the complete file, including e-mail addresses, is fetched to
+     rov_lab/assets/third_party/github/uuv_simulator/NOTICE by fetch_third_party_assets.py)
+
+  Modifications by rov_lab (2026): Collada meshes converted to USD; the panel rebuilt as a USD articulation
+  (primitive collision shapes, revolute valve joints with Isaac Lab friction instead of ODE friction); the panel
+  texture metal_bare_0045_01.jpg (texturelib.com license, not redistributable on its own) was not used and is
+  replaced by the CC0 Poly Haven texture "Rusty Painted Metal".
+
+--------------------------------------------------------------------------------------------------------------------
+DAVE (Project DAVE, Field Robotics Lab)
+  https://github.com/Field-Robotics-Lab/dave  (commit e54ea16bdaf7d6dbb466cf141846a03f284a44dd)
+  Licensed under the Apache License, Version 2.0. The project has no NOTICE file.
+
+  Used: models/dave_object_models/models/electrical_panel (skid frame "Underwater-Frame" and electrical socket),
+  f_to_m_plug (wet-mate plug); plug-and-socket xacros and plugin source kept for reference only.
+
+  Modifications by rov_lab (2026): Collada meshes converted to USD, rotated and scaled as in the source SDF files,
+  combined into the static work-site layout; collision meshes reused as triangle-mesh / convex-decomposition colliders.

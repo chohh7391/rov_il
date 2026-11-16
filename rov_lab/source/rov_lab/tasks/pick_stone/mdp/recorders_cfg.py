@@ -7,8 +7,8 @@ from isaaclab.managers.recorder_manager import RecorderTerm, RecorderTermCfg
 from isaaclab.utils import configclass
 
 # Import the class directly (not `from . import recorders`): the task's `mdp/__init__.py` does
-# `from leisaac.enhance.envs.mdp import *`, which binds a `recorders` name into the mdp package
-# namespace and would otherwise shadow this sibling module.
+# `from isaaclab.envs.mdp import *`, which binds a `recorders` name into the mdp package namespace
+# and would otherwise shadow this sibling module.
 from .recorders import PreStepTargetColorRecorder
 
 

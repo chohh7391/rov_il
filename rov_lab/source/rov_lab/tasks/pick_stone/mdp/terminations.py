@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import torch
-from isaaclab.assets import RigidObject
-from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
 from isaaclab.managers import SceneEntityCfg
 
 from .observations import resolve_target_color_id, target_cube_grasped
+from rov_lab.utils.tensor import as_torch
+
+if TYPE_CHECKING:
+    from isaaclab.assets import RigidObject
+    from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
 
 
 def target_cube_grasped_and_lifted(
@@ -26,9 +31,9 @@ def target_cube_grasped_and_lifted(
     spawn_heights = []
     for cube_cfg in cube_cfgs:
         cube: RigidObject = env.scene[cube_cfg.name]
-        current_heights.append(cube.data.root_pos_w[:, 2])
+        current_heights.append(as_torch(cube.data.root_pos_w)[:, 2])
         # TODO: Store a per-episode spawn height when cube spawn randomization is introduced.
-        spawn_heights.append(cube.data.default_root_state[:, 2])
+        spawn_heights.append(as_torch(cube.data.default_root_pose)[:, 2])
 
     target_ids = resolve_target_color_id(env)
     cube_current_heights = torch.stack(current_heights, dim=1)
