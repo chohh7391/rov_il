@@ -32,6 +32,7 @@ import torch
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.utils import configclass
 import isaaclab.utils.math as math_utils
+from rov_lab.utils.tensor import as_torch
 
 __all__ = ["HydroParamsCfg", "build_hydro_coeffs", "compute_hydro_wrench", "apply_hydro_wrench"]
 
@@ -201,7 +202,7 @@ def apply_hydro_wrench(
         return
 
     asset = env.scene[asset_cfg.name]
-    body_id = asset_cfg.body_ids[0]
+    body_id = int(asset_cfg.body_ids[0])  # Isaac Lab 3.0: body_ids may be a device tensor
 
     # Persistent per-env state (coeffs + finite-diff buffers) stashed on env, lazily.
     if not hasattr(env, "_rov_hydro_coeffs"):
@@ -209,9 +210,9 @@ def apply_hydro_wrench(
         env._rov_hydro_prev_vel = torch.zeros(env.num_envs, 6, device=env.device)
         env._rov_hydro_prev_acc = torch.zeros(env.num_envs, 6, device=env.device)
 
-    quat_w = asset.data.body_quat_w[:, body_id]
-    lin_w = asset.data.body_lin_vel_w[:, body_id]
-    ang_w = asset.data.body_ang_vel_w[:, body_id]
+    quat_w = as_torch(asset.data.body_quat_w)[:, body_id]
+    lin_w = as_torch(asset.data.body_lin_vel_w)[:, body_id]
+    ang_w = as_torch(asset.data.body_ang_vel_w)[:, body_id]
 
     quat_inv = math_utils.quat_conjugate(quat_w)
     lin_b = math_utils.quat_apply(quat_inv, lin_w)
@@ -232,7 +233,7 @@ def apply_hydro_wrench(
         lin_b, ang_b, roll, pitch, acc_b, env._rov_hydro_coeffs, hydro_cfg
     )
 
-    asset.instantaneous_wrench_composer.add_forces_and_torques(
+    asset.instantaneous_wrench_composer.add_forces_and_torques_index(
         forces=force_b.unsqueeze(1),
         torques=torque_b.unsqueeze(1),
         body_ids=[body_id],

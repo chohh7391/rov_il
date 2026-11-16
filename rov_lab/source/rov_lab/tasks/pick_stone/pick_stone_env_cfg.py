@@ -30,7 +30,7 @@ def _colored_cube_cfg(
 ) -> RigidObjectCfg:
     return RigidObjectCfg(
         prim_path=f"{{ENV_REGEX_NS}}/{name}",
-        init_state=RigidObjectCfg.InitialStateCfg(pos=position, rot=(1.0, 0.0, 0.0, 0.0)),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=position, rot=(0.0, 0.0, 0.0, 1.0)),  # xyzw
         spawn=sim_utils.CuboidCfg(
             size=(0.03, 0.03, 0.03),
             rigid_props=sim_utils.RigidBodyPropertiesCfg(
@@ -69,7 +69,7 @@ class PickStoneSceneCfg(ROVSingleArmTaskSceneCfg):
         prim_path="{ENV_REGEX_NS}/rock",
         init_state=RigidObjectCfg.InitialStateCfg(
             pos=(1.5, 0.05, -1.5),
-            rot=(0.205415, -0.502620, -0.743210, 0.390915),
+            rot=(-0.502620, -0.743210, 0.390915, 0.205415),  # xyzw (was wxyz 0.205415, -0.502620, -0.743210, 0.390915)
         ),
         spawn=UsdFileCfg(
             usd_path=str(OBJECT_DIR / "collected_rock" / "rock.usd"),
@@ -145,9 +145,8 @@ class PickStoneEnvCfg(ROVSingleArmTaskEnvCfg):
 
     task_description: str = "Pick up the target colored cube and lift it off the seabed."
 
-    # Per-color natural-language instructions, indexed by target_color_id. The template's
-    # build_lerobot_frame() reads this (via getattr) to emit color-specific tasks on the
-    # in-recording LeRobot route; the offline converter resolves instructions independently.
+    # Per-color natural-language instructions, indexed by target_color_id (recorded per episode
+    # under task/target_color_id). The offline HDF5 -> LeRobot converter resolves the instruction.
     task_instructions: tuple[str, ...] = TARGET_INSTRUCTIONS
 
     def __post_init__(self) -> None:

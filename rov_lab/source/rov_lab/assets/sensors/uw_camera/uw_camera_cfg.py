@@ -1,56 +1,61 @@
-# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
-# All rights reserved.
-#
-# SPDX-License-Identifier: BSD-3-Clause
+"""Underwater camera configuration (Isaac Lab 3.0)."""
 
 from __future__ import annotations
 
 from isaaclab.sensors.camera.camera_cfg import CameraCfg
 from isaaclab.utils import configclass
 
-from .uw_camera import UWCamera
+UW_REQUIRED_DATA_TYPES: tuple[str, ...] = ("rgb", "distance_to_camera")
 
 
 @configclass
 class UWCameraCfg(CameraCfg):
-    """Configuration for an underwater camera sensor.
+    """Stock Isaac Lab camera plus the water parameters of the OceanSim underwater image model.
 
-    The underwater camera is a USD pinhole camera with a per-pixel post-processing pass
-    (the Oceansim ``UW_render`` Warp kernel) that applies depth-dependent backscatter
-    and attenuation to the raw LDR color output. One instance is spawned per environment.
+    The camera renders ``rgb`` and ``distance_to_camera``. The underwater appearance is applied afterwards by
+    :func:`rov_lab.assets.sensors.uw_camera.uw_render` (used by the ``uw_image`` observation term)::
 
-    .. note::
-        - ``data_types`` from :class:`CameraCfg` is ignored. The UW camera uses its own
-          annotator set (``LdrColor`` and ``distance_to_camera``) attached internally so
-          that the kernel can consume the raw linear color and the depth in a single tick.
-        - Default underwater parameters approximate the typical coastal-water values
-          baked into the original Oceansim sensor.
+        I = J * exp(-atten_coeff * d) + 255 * backscatter_value * (1 - exp(-backscatter_coeff * d))
+
+    with ``J`` the clean color and ``d`` the per-pixel distance in meters. Defaults are OceanSim's coastal-water
+    values. In Isaac Lab 2.x this was a custom ``Camera`` subclass running a Warp kernel; it was replaced because
+    3.0 cameras are renderer-backed and no longer expose the render-product internals it relied on.
     """
 
-    class_type: type = UWCamera
-
-    # the parent's data_types pipeline is unused; the UW camera owns its annotators.
-    data_types: list[str] = []
-
-    ##
-    # Underwater rendering parameters.
-    # All triples are in linear (R, G, B) order, matching the original Oceansim sensor.
-    ##
+    data_types: list[str] = list(UW_REQUIRED_DATA_TYPES)
 
     backscatter_value: tuple[float, float, float] = (0.0, 0.31, 0.24)
-    """Ambient backscatter color (R, G, B) added uniformly to the scene."""
+    """Ambient backscatter color (RGB, 0-1)."""
 
     atten_coeff: tuple[float, float, float] = (0.05, 0.05, 0.05)
-    """Per-channel attenuation coefficients (R, G, B).
-
-    Applied exponentially with depth: ``radiance *= exp(-atten_coeff * depth)``.
-    Larger values → faster light loss (more turbid water).
-    """
+    """Per-channel attenuation coefficient (1/m). Larger values mean more turbid water."""
 
     backscatter_coeff: tuple[float, float, float] = (0.05, 0.05, 0.2)
-    """Per-channel backscatter coefficients (R, G, B).
+    """Per-channel rate (1/m) at which backscatter builds up with distance."""
 
-    Controls how strongly the ambient ``backscatter_value`` builds up with depth.
-    The blue channel is typically the largest, reflecting how blue-shifted scattered
-    light dominates in water.
+    max_render_distance: float = 1.0e6
+    """Distance (m) used for pixels with no hit (open water) or invalid depth.
+
+    OceanSim feeds the raw ``inf`` depth to its kernel, so open water renders as the pure backscatter color. The
+    large default reproduces that (``exp(-coeff * d) = 0``) while staying finite when a coefficient is zero.
     """
+
+    oceansim_lighting: bool = True
+    """Render without RTX's uniform ambient light (``rtx.sceneDb.ambientLightIntensity = 0``), as OceanSim does.
+
+    Isaac Lab 3.0's rendering experience sets the ambient light to 1.0, which brightens and flattens the image. In
+    the shared OceanSim comparison scene (``rov_lab/scripts/tools/oceansim_compare``) turning it off raises the
+    clean-RGB PSNR against OceanSim from 17 dB to 25 dB (underwater image: 19 -> 27 dB). This is a global RTX
+    setting, so it applies to every camera in the stage.
+    """
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        for data_type in UW_REQUIRED_DATA_TYPES:
+            if data_type not in self.data_types:
+                self.data_types.append(data_type)
+        if self.oceansim_lighting:
+            from isaaclab_physx.renderers import IsaacRtxRendererCfg
+
+            if isinstance(self.renderer_cfg, IsaacRtxRendererCfg):
+                self.renderer_cfg.global_settings = self.renderer_cfg.global_settings.replace(ambient_light_intensity=0.0)

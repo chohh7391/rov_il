@@ -3,6 +3,7 @@ from isaaclab.assets import Articulation, RigidObject
 from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.sensors import FrameTransformer
+from rov_lab.utils.tensor import as_torch
 
 
 def resolve_target_color_id(env: ManagerBasedRLEnv | DirectRLEnv) -> torch.Tensor:
@@ -32,11 +33,11 @@ def object_grasped(
     ee_frame: FrameTransformer = env.scene[ee_frame_cfg.name]
     rigid_object: RigidObject = env.scene[object_cfg.name]
 
-    object_pos = rigid_object.data.root_pos_w
-    end_effector_pos = ee_frame.data.target_pos_w[:, 1, :]
+    object_pos = as_torch(rigid_object.data.root_pos_w)
+    end_effector_pos = as_torch(ee_frame.data.target_pos_w)[:, 1, :]
     pos_diff = torch.linalg.vector_norm(object_pos - end_effector_pos, dim=1)
 
-    grasped = torch.logical_and(pos_diff < diff_threshold, robot.data.joint_pos[:, -1] < grasp_threshold)
+    grasped = torch.logical_and(pos_diff < diff_threshold, as_torch(robot.data.joint_pos)[:, -1] < grasp_threshold)
 
     return grasped
 

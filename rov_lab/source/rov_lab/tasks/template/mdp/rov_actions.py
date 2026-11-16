@@ -33,6 +33,7 @@ from isaaclab.envs.mdp.actions.joint_actions import RelativeJointPositionAction
 from isaaclab.envs.mdp.actions.task_space_actions import DifferentialInverseKinematicsAction
 from isaaclab.utils import configclass
 import isaaclab.utils.math as math_utils
+from rov_lab.utils.tensor import as_torch
 
 if TYPE_CHECKING:
     from isaaclab.envs import ManagerBasedEnv
@@ -116,7 +117,7 @@ class ROVVelocityAction(ActionTerm):
         # during acceleration. We cache the per-body masses so we can recompute the combined COM
         # each step (the arm configuration, and therefore the COM, changes over time).
         self._com_compensation = bool(cfg.com_compensation)
-        body_masses = self._asset.data.default_mass.to(self.device)  # (num_envs, num_bodies)
+        body_masses = as_torch(self._asset.data.default_mass).to(self.device)  # (num_envs, num_bodies)
         self._body_masses = body_masses.unsqueeze(-1)  # (num_envs, num_bodies, 1)
         self._total_mass = body_masses.sum(dim=1, keepdim=True).clamp_min(1.0e-9)  # (num_envs, 1)
 
@@ -213,9 +214,9 @@ class ROVVelocityAction(ActionTerm):
 
     def apply_actions(self):
         # 1. Current state (world frame).
-        control_quat_w = self._asset.data.body_quat_w[:, self._control_body_idx]
-        lin_vel_w = self._asset.data.body_lin_vel_w[:, self._rov_body_idx]
-        ang_vel_w = self._asset.data.body_ang_vel_w[:, self._rov_body_idx]
+        control_quat_w = as_torch(self._asset.data.body_quat_w)[:, self._control_body_idx]
+        lin_vel_w = as_torch(self._asset.data.body_lin_vel_w)[:, self._rov_body_idx]
+        ang_vel_w = as_torch(self._asset.data.body_ang_vel_w)[:, self._rov_body_idx]
 
         # 2. Express current velocities in the control frame. The wrench can be applied to a
         # different heavy hull body while preserving the teleoperation/body-axis convention.
@@ -263,12 +264,12 @@ class ROVVelocityAction(ActionTerm):
         # couple ``(C - P) x F`` so the net wrench is equivalent to thrust acting through the true
         # combined COM. Applied after the servo clamp so the full physical correction is delivered.
         if self._com_compensation:
-            com_w = self._asset.data.body_com_pos_w  # (num_envs, num_bodies, 3)
+            com_w = as_torch(self._asset.data.body_com_pos_w)  # (num_envs, num_bodies, 3)
             combined_com_w = (self._body_masses * com_w).sum(dim=1) / self._total_mass  # (num_envs, 3)
             force_point_w = com_w[:, self._rov_body_idx]  # application point P
             torques_w = torques_w + torch.cross(combined_com_w - force_point_w, forces_w, dim=-1)
 
-        self._asset.permanent_wrench_composer.set_forces_and_torques(
+        self._asset.permanent_wrench_composer.set_forces_and_torques_index(
             forces=forces_w.unsqueeze(1),
             torques=torques_w.unsqueeze(1),
             body_ids=[self._rov_body_idx],
@@ -381,22 +382,22 @@ class ROVRelativeIKAction(DifferentialInverseKinematicsAction):
     def __init__(self, cfg: ROVRelativeIKActionCfg, env: ManagerBasedEnv):
         super().__init__(cfg, env)
         self._inactive_deadband = float(cfg.inactive_deadband)
-        self._joint_pos_hold_target = self._asset.data.joint_pos[:, self._joint_ids].clone()
+        self._joint_pos_hold_target = as_torch(self._asset.data.joint_pos)[:, self._joint_ids].clone()
 
     def apply_actions(self):
         if torch.all(torch.abs(self._raw_actions) <= self._inactive_deadband):
-            self._asset.set_joint_position_target(self._joint_pos_hold_target, self._joint_ids)
+            self._asset.set_joint_position_target_index(target=self._joint_pos_hold_target, joint_ids=self._joint_ids)
             return
 
         super().apply_actions()
-        self._joint_pos_hold_target[:] = self._asset.data.joint_pos_target[:, self._joint_ids]
+        self._joint_pos_hold_target[:] = as_torch(self._asset.data.joint_pos_target)[:, self._joint_ids]
 
     def reset(self, env_ids: Sequence[int] | None = None) -> None:
         super().reset(env_ids)
         if env_ids is None:
-            self._joint_pos_hold_target[:] = self._asset.data.joint_pos[:, self._joint_ids]
+            self._joint_pos_hold_target[:] = as_torch(self._asset.data.joint_pos)[:, self._joint_ids]
         else:
-            self._joint_pos_hold_target[env_ids] = self._asset.data.joint_pos[env_ids][:, self._joint_ids]
+            self._joint_pos_hold_target[env_ids] = as_torch(self._asset.data.joint_pos)[env_ids][:, self._joint_ids]
 
 
 @configclass
@@ -417,23 +418,23 @@ class ROVRelativeJointPositionAction(RelativeJointPositionAction):
     def __init__(self, cfg: ROVRelativeJointPositionActionCfg, env: ManagerBasedEnv):
         super().__init__(cfg, env)
         self._inactive_deadband = float(cfg.inactive_deadband)
-        self._joint_pos_hold_target = self._asset.data.joint_pos[:, self._joint_ids].clone()
+        self._joint_pos_hold_target = as_torch(self._asset.data.joint_pos)[:, self._joint_ids].clone()
 
     def apply_actions(self):
         if torch.all(torch.abs(self._raw_actions) <= self._inactive_deadband):
-            self._asset.set_joint_position_target(self._joint_pos_hold_target, joint_ids=self._joint_ids)
+            self._asset.set_joint_position_target_index(target=self._joint_pos_hold_target, joint_ids=self._joint_ids)
             return
 
-        current_actions = self.processed_actions + self._asset.data.joint_pos[:, self._joint_ids]
-        self._asset.set_joint_position_target(current_actions, joint_ids=self._joint_ids)
+        current_actions = self.processed_actions + as_torch(self._asset.data.joint_pos)[:, self._joint_ids]
+        self._asset.set_joint_position_target_index(target=current_actions, joint_ids=self._joint_ids)
         self._joint_pos_hold_target[:] = current_actions
 
     def reset(self, env_ids: Sequence[int] | None = None) -> None:
         super().reset(env_ids)
         if env_ids is None:
-            self._joint_pos_hold_target[:] = self._asset.data.joint_pos[:, self._joint_ids]
+            self._joint_pos_hold_target[:] = as_torch(self._asset.data.joint_pos)[:, self._joint_ids]
         else:
-            self._joint_pos_hold_target[env_ids] = self._asset.data.joint_pos[env_ids][:, self._joint_ids]
+            self._joint_pos_hold_target[env_ids] = as_torch(self._asset.data.joint_pos)[env_ids][:, self._joint_ids]
 
 
 @configclass

@@ -29,7 +29,7 @@ BLUE_ROV_SINGLE_ARM_CFG = ArticulationCfg(
     ),
     init_state=ArticulationCfg.InitialStateCfg(
         pos=(0.0, 0.0, 0.0),
-        rot=(1.0, 0.0, 0.0, 0.0),
+        rot=(0.0, 0.0, 0.0, 1.0),  # xyzw (Isaac Lab 3.0)
         joint_pos={
             "shoulder_pan": 0.0,
             "shoulder_lift": 0.0,

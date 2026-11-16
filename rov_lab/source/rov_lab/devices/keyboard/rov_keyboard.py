@@ -6,8 +6,9 @@ import carb
 import torch
 import numpy as np
 import isaaclab.utils.math as math_utils
-from leisaac.devices.device_base import Device
-from leisaac.utils.math_utils import rotvec_to_euler
+
+from rov_lab.devices.device_base import Device
+from rov_lab.utils.tensor import as_torch
 
 
 class ROVKeyboard(Device):
@@ -67,7 +68,6 @@ class ROVKeyboard(Device):
         """
         if np.allclose(delta_action[:3], 0.0) and np.allclose(delta_action[3:6], 0.0):
             return delta_action
-        is_delta_rot = not np.allclose(delta_action[3:6], 0.0)
 
         torch_delta_action = torch.tensor(delta_action, device=self.env.device, dtype=torch.float32)
 
@@ -79,9 +79,9 @@ class ROVKeyboard(Device):
         # The arm teleoperation command is expressed in the current gripper frame.
         # Convert it to the physical ROV hull frame, not the articulation root frame.
         # This keeps arm commands tied to the moving ROV base.
-        base_pos_w = self.robot_asset.data.body_pos_w[:, self.base_frame_idx]
-        base_quat_w = self.robot_asset.data.body_quat_w[:, self.base_frame_idx]
-        target_quat_w = self.robot_asset.data.body_quat_w[:, self.target_frame_idx]
+        base_pos_w = as_torch(self.robot_asset.data.body_pos_w)[:, self.base_frame_idx]
+        base_quat_w = as_torch(self.robot_asset.data.body_quat_w)[:, self.base_frame_idx]
+        target_quat_w = as_torch(self.robot_asset.data.body_quat_w)[:, self.target_frame_idx]
         _, target_to_base_quat = math_utils.subtract_frame_transforms(
             base_pos_w,
             base_quat_w,
@@ -91,14 +91,12 @@ class ROVKeyboard(Device):
         target_to_base_quat = math_utils.quat_unique(target_to_base_quat)
 
         delta_pos_b = math_utils.quat_apply(target_to_base_quat, delta_pos_f)
+        # The relative-pose IK command takes the rotation as an axis-angle vector, so the rotated rotation
+        # vector is passed through directly. (The leisaac version converted it to Euler angles, which both
+        # mismatched the IK convention and crashed on a 0-d tensor when a rotation key was pressed.)
         delta_rotvec_b = math_utils.quat_apply(target_to_base_quat, delta_rotvec_f)
-        delta_rot_b = (
-            rotvec_to_euler(delta_rotvec_b)
-            if is_delta_rot
-            else torch.zeros(self.env.num_envs, 3, device=self.env.device)
-        )
 
-        delta_action_b = torch.cat([delta_pos_b[0], delta_rot_b[0], torch_delta_action[6:]], dim=0)
+        delta_action_b = torch.cat([delta_pos_b[0], delta_rotvec_b[0], torch_delta_action[6:]], dim=0)
 
         return delta_action_b.cpu().numpy()
 

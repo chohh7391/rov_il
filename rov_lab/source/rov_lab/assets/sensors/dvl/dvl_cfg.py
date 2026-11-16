@@ -1,82 +1,70 @@
-# Copyright (c) 2022-2026, The Isaac Lab Project Developers ...
-# SPDX-License-Identifier: BSD-3-Clause
+"""Doppler velocity log (DVL) configuration (Isaac Lab 3.0)."""
 
 from __future__ import annotations
+
+from typing import Literal
 
 from isaaclab.sensors.ray_caster.ray_caster_cfg import RayCasterCfg
 from isaaclab.utils import configclass
 
-from .dvl import DVL
 from .dvl_pattern_cfg import DVLJanusPatternCfg
 
 
 @configclass
 class DVLCfg(RayCasterCfg):
-    """Configuration for a Doppler Velocity Log (DVL) sensor.
+    """Stock Isaac Lab ray caster with a 4-beam Janus pattern plus OceanSim's DVL parameters.
 
-    Inherits ``mesh_prim_paths``, ``offset``, ``ray_alignment``, ``drift_range``, and
-    ``visualizer_cfg`` from :class:`RayCasterCfg`. The ray ``pattern_cfg`` defaults to the
-    DVL Janus 4-beam pattern and is kept in sync with :attr:`elevation` / :attr:`rotation` via
-    ``__post_init__``.
+    The ray caster measures the beam ranges to the seabed. The DVL outputs are computed by observation terms in
+    ``rov_lab.tasks.template.mdp.rov_observations`` using :mod:`rov_lab.assets.sensors.dvl.dvl_model`:
+
+    * ``dvl_linear_velocity``: velocity over ground in the vehicle body frame, with per-beam noise mapped through
+      the Janus transform (as OceanSim), zeroed on dropout (``num_beams_out_range_threshold`` beams lost).
+    * ``dvl_depth``: per-beam range to the seabed with per-beam noise; ``miss_value`` on beams with no return.
+    * ``dvl_beam_hit``: per-beam valid flag.
+
+    Parameter names and defaults follow ``OceanSim/isaacsim/oceansim/sensors/DVLsensor.py``. Deviations from
+    OceanSim are opt-in and listed on the fields (``velocity_point``, ``miss_value``). In Isaac Lab 2.x this was a
+    custom ``RayCaster`` subclass; it was replaced because 3.0 turned ``RayCaster`` into a backend factory and
+    changed the physics-view and buffer APIs it relied on.
     """
 
-    class_type: type = DVL
-
-    # Auto-populated; users normally don't override this directly. Override elevation/rotation instead.
     pattern_cfg: DVLJanusPatternCfg = DVLJanusPatternCfg()
 
-    # ------------------------------------------------------------------
-    # Beam geometry
-    # ------------------------------------------------------------------
+    body_name: str = "rov_base"
+    """Robot body the DVL is mounted on (used for the velocity measurement). ``prim_path`` should be this body:
+    the mounting position is given by :attr:`offset`, which Isaac Lab 3.0 applies to the ray pattern."""
+
     elevation: float = 22.5
-    """Beam elevation angle from horizontal in degrees. Defaults to 22.5."""
+    """Beam tilt from the vertical (deg). OceanSim default."""
 
     rotation: float = 45.0
-    """Beam rotation about Z-axis in degrees. Defaults to 45 (Janus configuration)."""
+    """Beam pattern rotation about the sensor z axis (deg). OceanSim default (Janus X configuration)."""
 
-    # ------------------------------------------------------------------
-    # Range / dropout
-    # ------------------------------------------------------------------
     min_range: float = 0.1
-    """Minimum valid range in meters. Defaults to 0.1."""
+    """Minimum valid beam range (m)."""
 
     max_range: float = 100.0
-    """Maximum valid range in meters. Defaults to 100.0.
-
-    Forwarded to :attr:`RayCasterCfg.max_distance` in ``__post_init__``.
-    """
+    """Maximum valid beam range (m). Forwarded to :attr:`RayCasterCfg.max_distance`."""
 
     num_beams_out_range_threshold: int = 2
-    """Number of lost beams before declaring dropout. Defaults to 2."""
+    """Velocity drops out (zero) when at least this many beams have no return. OceanSim default."""
 
-    # ------------------------------------------------------------------
-    # Noise (per-beam covariance, matching the original Isaac Sim implementation)
-    # ------------------------------------------------------------------
     vel_cov: float = 0.0
-    """Velocity measurement noise covariance (per-beam). Defaults to 0.0."""
+    """Per-beam velocity noise variance ((m/s)^2), mapped to body axes by the Janus transform. OceanSim ``vel_cov``."""
 
     depth_cov: float = 0.0
-    """Depth measurement noise covariance (per-beam). Defaults to 0.0."""
+    """Per-beam range noise variance (m^2). OceanSim ``depth_cov``."""
 
-    # ------------------------------------------------------------------
-    # Operating frequency
-    # ------------------------------------------------------------------
-    freq: float | None = None
-    """Fixed operating frequency in Hz. If None, adaptive frequency is used. Defaults to None."""
+    velocity_point: Literal["com", "sensor"] = "sensor"
+    """``"com"``: body center-of-mass velocity, as OceanSim. ``"sensor"``: velocity of the DVL mounting point
+    (adds the lever-arm term for :attr:`offset`), which is what a real DVL measures."""
 
-    freq_bound: tuple[float, float] = (5.0, 100.0)
-    """``(min_freq, max_freq)`` for adaptive operation in Hz."""
+    miss_value: float | None = None
+    """Range reported for beams with no return. OceanSim returns NaN; ``None`` reports ``max_range`` instead,
+    which keeps policy inputs finite."""
 
-    freq_dependent_range_bound: tuple[float, float] = (7.5, 50.0)
-    """``(min_range, max_range)`` for frequency adaptation in meters."""
-
-    sound_speed: float = 1500.0
-    """Speed of sound in water in m/s. Defaults to 1500.0."""
-
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         super().__post_init__()
-        # Keep the underlying RayCaster pattern + max distance in sync with DVL fields.
         self.pattern_cfg = DVLJanusPatternCfg(elevation=self.elevation, rotation=self.rotation)
         self.max_distance = self.max_range
-        # DVL beams are attached to the body, so full orientation matters.
         self.ray_alignment = "base"

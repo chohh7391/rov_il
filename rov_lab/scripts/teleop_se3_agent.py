@@ -41,9 +41,6 @@ parser.add_argument(
 )
 
 parser.add_argument("--quality", action="store_true", help="whether to enable quality render mode.")
-parser.add_argument("--use_lerobot_recorder", action="store_true", help="whether to use lerobot recorder.")
-parser.add_argument("--lerobot_dataset_repo_id", type=str, default=None, help="Lerobot Dataset repository ID.")
-parser.add_argument("--lerobot_dataset_fps", type=int, default=30, help="Lerobot Dataset frames per second.")
 
 parser.add_argument("--visualize", action="store_true", help="whether to enable visualization")
 
@@ -66,8 +63,7 @@ import torch
 from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
 from isaaclab.managers import DatasetExportMode, TerminationTermCfg
 from isaaclab_tasks.utils import parse_env_cfg
-from leisaac.enhance.managers import EnhanceDatasetExportMode, StreamingRecorderManager
-from leisaac.utils.env_utils import dynamic_reset_gripper_effort_limit_sim
+from rov_lab.managers import EnhanceDatasetExportMode, StreamingRecorderManager
 from rov_lab.assets.sensors.utils.rerun_visualizer import (
     init_rerun,
     log_rov_sensors,
@@ -170,22 +166,17 @@ def main():  # noqa: C901
             env_cfg.terminations.success = None
     # recorder preprocess & manual success terminate preprocess
     if args_cli.record:
-        if args_cli.use_lerobot_recorder:
-            if args_cli.resume:
-                env_cfg.recorders.dataset_export_mode = EnhanceDatasetExportMode.EXPORT_SUCCEEDED_ONLY_RESUME
-            else:
-                env_cfg.recorders.dataset_export_mode = DatasetExportMode.EXPORT_SUCCEEDED_ONLY
+        # Demonstrations are recorded to HDF5; conversion to LeRobot happens offline in rov_lerobot.
+        if args_cli.resume:
+            env_cfg.recorders.dataset_export_mode = EnhanceDatasetExportMode.EXPORT_ALL_RESUME
+            assert os.path.exists(
+                args_cli.dataset_file
+            ), "the dataset file does not exist, please don't use '--resume' if you want to record a new dataset"
         else:
-            if args_cli.resume:
-                env_cfg.recorders.dataset_export_mode = EnhanceDatasetExportMode.EXPORT_ALL_RESUME
-                assert os.path.exists(
-                    args_cli.dataset_file
-                ), "the dataset file does not exist, please don't use '--resume' if you want to record a new dataset"
-            else:
-                env_cfg.recorders.dataset_export_mode = DatasetExportMode.EXPORT_ALL
-                assert not os.path.exists(
-                    args_cli.dataset_file
-                ), "the dataset file already exists, please use '--resume' to resume recording"
+            env_cfg.recorders.dataset_export_mode = DatasetExportMode.EXPORT_ALL
+            assert not os.path.exists(
+                args_cli.dataset_file
+            ), "the dataset file already exists, please use '--resume' to resume recording"
         env_cfg.recorders.dataset_export_dir_path = output_dir
         env_cfg.recorders.dataset_filename = output_file_name
         if is_direct_env:
@@ -201,26 +192,12 @@ def main():  # noqa: C901
 
     # create environment
     env: ManagerBasedRLEnv | DirectRLEnv = gym.make(task_name, cfg=env_cfg).unwrapped
-    # replace the original recorder manager with the streaming recorder manager or lerobot recorder manager
+    # replace the original recorder manager with the streaming HDF5 recorder manager
     if args_cli.record:
         del env.recorder_manager
-        if args_cli.use_lerobot_recorder:
-            from leisaac.enhance.datasets.lerobot_dataset_handler import (
-                LeRobotDatasetCfg,
-            )
-            from leisaac.enhance.managers.lerobot_recorder_manager import (
-                LeRobotRecorderManager,
-            )
-
-            dataset_cfg = LeRobotDatasetCfg(
-                repo_id=args_cli.lerobot_dataset_repo_id,
-                fps=args_cli.lerobot_dataset_fps,
-            )
-            env.recorder_manager = LeRobotRecorderManager(env_cfg.recorders, dataset_cfg, env)
-        else:
-            env.recorder_manager = StreamingRecorderManager(env_cfg.recorders, env)
-            env.recorder_manager.flush_steps = 100
-            env.recorder_manager.compression = "lzf"
+        env.recorder_manager = StreamingRecorderManager(env_cfg.recorders, env)
+        env.recorder_manager.flush_steps = 100
+        env.recorder_manager.compression = "lzf"
 
     # create controller
     if args_cli.teleop_device == "keyboard":
@@ -285,8 +262,6 @@ def main():  # noqa: C901
         while simulation_app.is_running() and not interrupted:
             # run everything in inference mode
             with torch.inference_mode():
-                if env.cfg.dynamic_reset_gripper_effort_limit:
-                    dynamic_reset_gripper_effort_limit_sim(env, args_cli.teleop_device)
                 actions = teleop_interface.advance()
                 if should_reset_task_success:
                     print("Task Success!!!")
